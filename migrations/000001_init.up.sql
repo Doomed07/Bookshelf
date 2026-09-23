@@ -9,7 +9,7 @@ CREATE TABLE bookshelfapp.users (
 
     CONSTRAINT users_username_format CHECK (username ~ '^[A-Za-z0-9_]{3,30}$'),
     CONSTRAINT users_email_lowercase CHECK (email = lower(email)),
-    CONSTRAINT users_email_format CHECK (email ~ '^[A-Za-z0-9_+-]+@([A-Za-z0-9-]+\.)+[a-z]{2,}$')
+    CONSTRAINT users_email_format CHECK (email ~ '^[a-z0-9._+-]+@([a-z0-9-]+\.)+[a-z]{2,}$')
 );
 
 CREATE TABLE bookshelfapp.books (

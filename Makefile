@@ -12,8 +12,8 @@ env-down:
 env-cleanup:
 	@read -p "Do you really want to clear volume? Risk of data loss. [y/N]: " ans; \
 	if [ "$$ans" = "y" ]; then \
-		docker compose down bookshelfapp-postgres && \
-		rm -rf out/pgdata && \
+		docker compose down bookshelfapp-postgres port-forwarder && \
+		rm -rf ${PROJECT_ROOT}/out/pgdata && \
 		echo "Environment files have been removed"; \
 	else \
 		echo "Environment cleanup cancelled"; \
@@ -23,7 +23,7 @@ env-port-forward:
 	@docker compose up -d port-forwarder
 
 env-port-close:
-	@@docker compose down port-forwarder
+	@docker compose down port-forwarder
 
 migrate-create:
 	@if [ -z "$(seq)" ]; then \
@@ -62,3 +62,8 @@ migrate-force:
 	-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@bookshelfapp-postgres:5432/${POSTGRES_DB}?sslmode=disable \
 	force "${version}"
 
+app-run:
+	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	export POSTGRES_HOST=localhost && \
+	go mod tidy && \
+	go run ${PROJECT_ROOT}/cmd/bookshelfapp/main.go
