@@ -45,10 +45,18 @@ func NewUserUninitialized(
 	return NewUser(
 		UninitializedID,
 		UninitializedVersion,
-		strings.TrimSpace(username),
-		strings.ToLower(strings.TrimSpace(email)),
+		normalizeUsername(username),
+		normalizeEmail(email),
 		time.Time{},
 	)
+}
+
+func normalizeUsername(username string) string {
+	return strings.TrimSpace(username)
+}
+
+func normalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
 }
 
 func (u *User) Validate() error {
@@ -83,6 +91,13 @@ type UserPatch struct {
 	Email    Nullable[string]
 }
 
+func NewUserPatch(username Nullable[string], email Nullable[string]) UserPatch {
+	return UserPatch{
+		Username: username,
+		Email:    email,
+	}
+}
+
 func (p *UserPatch) Validate() error {
 	if p.Username.Set && p.Username.Value == nil {
 		return fmt.Errorf("'username' can't be patched to NULL: %w",
@@ -105,11 +120,11 @@ func (u *User) ApplyPatch(patch UserPatch) error {
 	temp := *u
 
 	if patch.Username.Set {
-		temp.Username = *patch.Username.Value
+		temp.Username = normalizeUsername(*patch.Username.Value)
 	}
 
 	if patch.Email.Set {
-		temp.Email = *patch.Email.Value
+		temp.Email = normalizeEmail(*patch.Email.Value)
 	}
 
 	if err := temp.Validate(); err != nil {

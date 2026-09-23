@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
-	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
+	core_postgres_pgx "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 	users_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/users/repository/postgres"
@@ -32,8 +32,8 @@ func main() {
 	defer logger.Close()
 
 	logger.Debug("initializing connection pool")
-	pool, err := core_postgres_pool.NewConnPool(
-		core_postgres_pool.NewConfigMust(),
+	pool, err := core_postgres_pgx.NewConnPool(
+		core_postgres_pgx.NewConfigMust(),
 		ctx,
 	)
 	if err != nil {
@@ -53,13 +53,14 @@ func main() {
 		logger,
 		core_http_middleware.RequestID(),
 		core_http_middleware.Logger(logger),
-		core_http_middleware.Panic(),
 		core_http_middleware.Trace(),
+		core_http_middleware.Panic(),
 	)
 
-	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
-	apiVersionRouter.RegisterRoutes(usersTransportHttp.Routes()...)
-	httpServer.RegisterAPIRouters(apiVersionRouter)
+	apiVersionRouterV1 := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
+	apiVersionRouterV1.RegisterRoutes(usersTransportHttp.Routes()...)
+
+	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("Failed to run server", zap.Error(err))

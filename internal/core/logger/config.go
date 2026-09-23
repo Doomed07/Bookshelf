@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Lvl    string `envconfig: "LVL" required:"true"`
-	Folder string `envconfig: "FOLDER" required:"true"`
+	Lvl    string `envconfig:"LVL" default:"DEBUG"`
+	Folder string `envconfig:"FOLDER" required:"true"`
 }
 
 func NewConfig() (Config, error) {
@@ -23,7 +23,7 @@ func NewConfig() (Config, error) {
 func NewConfigMust() Config {
 	config, err := NewConfig()
 	if err != nil {
-		fmt.Errorf("get logger cofig: %w", err)
+		err = fmt.Errorf("get logger cofig: %w", err)
 		panic(err)
 	}
 	return config
