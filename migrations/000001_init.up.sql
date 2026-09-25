@@ -18,7 +18,7 @@ CREATE TABLE bookshelfapp.books (
     author      VARCHAR(100) NOT NULL,
     year        SMALLINT NOT NULL,
     pages       SMALLINT NOT NULL,
-    genre       VARCHAR(50)[] NOT NULL,
+    genres      VARCHAR(200)[] NOT NULL,
     description VARCHAR(2000) NOT NULL,
     score       SMALLINT,
     reads_count INT NOT NULL DEFAULT 0, 
@@ -27,7 +27,7 @@ CREATE TABLE bookshelfapp.books (
     CONSTRAINT books_author_format CHECK (char_length(author) >= 1 AND author = btrim(author)),
     CONSTRAINT books_year_format CHECK (year BETWEEN 1 AND EXTRACT(YEAR FROM now())),
     CONSTRAINT books_pages_format CHECK (pages BETWEEN 1 AND 32000),
-    CONSTRAINT books_genre_not_empty CHECK (cardinality(genre) >= 1),
+    CONSTRAINT books_genres_not_empty CHECK (cardinality(genres) >= 1),
     CONSTRAINT books_description_format CHECK (char_length(description) >= 1 AND description = btrim(description)),
     CONSTRAINT books_score_range CHECK (score BETWEEN 1 AND 100),
     CONSTRAINT books_reads_count_range CHECK (reads_count >= 0)

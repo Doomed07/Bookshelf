@@ -22,5 +22,4 @@ func GetIntPathParam(r *http.Request, key string) (int, error) {
 	}
 
 	return id, nil
-
 }
