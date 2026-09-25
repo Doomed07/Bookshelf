@@ -2,6 +2,7 @@ include .env
 export 
 
 export PROJECT_ROOT=$(shell pwd)
+n ?= 1
 
 env-up:
 	@docker compose up -d bookshelfapp-postgres
@@ -37,10 +38,21 @@ migrate-create:
 		-seq "$(seq)"
 
 migrate-up:
-	@make migrate-action action=up
+	@make migrate-action action="up ${n}"
+
+migrate-up-all:
+	@make migrate-action action="up"
 
 migrate-down:
-	@make migrate-action action=down
+	@make migrate-action action="down ${n}"
+
+migrate-down-all:
+	@read -p "Rollback ALL migrations? Schema and data will be dropped. [y/N]: " ans; \
+	if [ "$$ans" = "y" ]; then \
+		make migrate-action action="down -all"; \
+	else \
+		echo "Rollback cancelled"; \
+	fi
 
 migrate-action:
 	@if [ -z "$(action)" ]; then \
@@ -50,7 +62,7 @@ migrate-action:
 	docker compose run --rm bookshelfapp-postgres-migrate \
 		-path /migrations \
 		-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@bookshelfapp-postgres:5432/${POSTGRES_DB}?sslmode=disable \
-		"${action}"
+		${action}
 
 migrate-force:
 	@if [ -z "$(version)" ]; then \

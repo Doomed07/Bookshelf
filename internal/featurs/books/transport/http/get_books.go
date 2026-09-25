@@ -1,4 +1,4 @@
-package users_transport_http
+package books_transport_http
 
 import (
 	"net/http"
@@ -8,26 +8,30 @@ import (
 	core_http_response "github.com/Doomed07/Bookshelf/internal/core/transport/http/response"
 )
 
-type GetUsersResponse []UserDTOResponse
+type GetBooksResponse []BookDTOResponse
 
-func (h *UsersHTTPHandler) GetUsers(rw http.ResponseWriter, r *http.Request) {
+func (h *BooksHTTPHandler) GetBooks(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(log, rw)
 
+	title := core_http_request.GetStrQueryParam(r, "title")
+	author := core_http_request.GetStrQueryParam(r, "author")
+
 	limit, offset, err := core_http_request.GetLimitOffsetQueryParam(r)
 	if err != nil {
-		responseHandler.ErrorResponse(err, "failed to get query param")
+		responseHandler.ErrorResponse(err, "failed to get query param: limit/offset")
 		return
 	}
 
-	usersDomains, err := h.usersService.GetUsers(ctx, limit, offset)
+	books, err := h.booksService.GetBooks(ctx, title, author, limit, offset)
 	if err != nil {
-		responseHandler.ErrorResponse(err, "failed to get users")
+		responseHandler.ErrorResponse(err, "failed to get books")
 		return
 	}
 
-	response := GetUsersResponse(usersDTOFromDomains(usersDomains))
+	response := GetBooksResponse(booksDTOFromDomains(books))
 
 	responseHandler.JSONResponse(http.StatusOK, response)
+
 }

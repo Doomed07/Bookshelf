@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 )
 
-func GetQueryParam(r *http.Request, key string) (*int, error) {
+func getIntQueryParam(r *http.Request, key string) (*int, error) {
 	param := r.URL.Query().Get(key)
 	if param == "" {
 		return nil, nil
@@ -23,4 +24,31 @@ func GetQueryParam(r *http.Request, key string) (*int, error) {
 	}
 
 	return &queryParam, nil
+}
+
+func GetLimitOffsetQueryParam(r *http.Request) (*int, *int, error) {
+	const (
+		limitQueryParam  = "limit"
+		offsetQueryParam = "offset"
+	)
+
+	limit, err := getIntQueryParam(r, limitQueryParam)
+	if err != nil {
+		return nil, nil, fmt.Errorf("get 'limit' query param: %w", err)
+	}
+
+	offset, err := getIntQueryParam(r, offsetQueryParam)
+	if err != nil {
+		return nil, nil, fmt.Errorf("get 'offset' query param: %w", err)
+	}
+	return limit, offset, nil
+}
+
+func GetStrQueryParam(r *http.Request, key string) *string {
+	param := strings.TrimSpace(r.URL.Query().Get(key))
+	if param == "" {
+		return nil
+	}
+
+	return &param
 }
