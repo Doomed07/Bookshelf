@@ -27,7 +27,7 @@ func (h *BooksHTTPHandler) GetBook(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := GetBookResponse(bookDTOFromDomain(bookDomain))
+	response := GetBookResponse(BookDTOFromDomain(bookDomain))
 
 	responseHandler.JSONResponse(http.StatusOK, response)
 }

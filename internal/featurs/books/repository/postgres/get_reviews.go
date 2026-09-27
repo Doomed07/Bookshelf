@@ -17,7 +17,7 @@ func (r *BooksRepository) GetReviews(ctx context.Context, id, limit, offset int)
 	JOIN bookshelfapp.users u ON u.id = b.user_id
 	WHERE b.book_id = $1
 	AND (b.rating IS NOT NULL OR b.review IS NOT NULL)
-	ORDER By b.read_at DESC
+	ORDER By b.read_at DESC, b.user_id
 	LIMIT $2
 	OFFSET $3;
 	`

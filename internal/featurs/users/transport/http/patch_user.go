@@ -42,6 +42,13 @@ func (p *PatchUserRequest) Validate() error {
 	return nil
 }
 
+func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
+	return domain.NewUserPatch(
+		request.Username.ToDomain(),
+		request.Email.ToDomain(),
+	)
+}
+
 type PatchedUserResponse UserDTOResponse
 
 func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
@@ -72,11 +79,4 @@ func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
 	response := PatchedUserResponse(userDTOFromDomain(userDomain))
 
 	responseHandler.JSONResponse(http.StatusOK, response)
-}
-
-func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
-	return domain.NewUserPatch(
-		request.Username.ToDomain(),
-		request.Email.ToDomain(),
-	)
 }

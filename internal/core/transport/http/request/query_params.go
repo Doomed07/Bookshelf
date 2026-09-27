@@ -26,6 +26,15 @@ func getIntQueryParam(r *http.Request, key string) (*int, error) {
 	return &queryParam, nil
 }
 
+func GetStrQueryParam(r *http.Request, key string) *string {
+	param := strings.TrimSpace(r.URL.Query().Get(key))
+	if param == "" {
+		return nil
+	}
+
+	return &param
+}
+
 func GetLimitOffsetQueryParam(r *http.Request) (*int, *int, error) {
 	const (
 		limitQueryParam  = "limit"
@@ -44,11 +53,28 @@ func GetLimitOffsetQueryParam(r *http.Request) (*int, *int, error) {
 	return limit, offset, nil
 }
 
-func GetStrQueryParam(r *http.Request, key string) *string {
-	param := strings.TrimSpace(r.URL.Query().Get(key))
+func getBoolQueryParam(r *http.Request, key string) (*bool, error) {
+	param := r.URL.Query().Get(key)
 	if param == "" {
-		return nil
+		return nil, nil
 	}
 
-	return &param
+	queryParam, err := strconv.ParseBool(param)
+	if err != nil {
+		return nil, fmt.Errorf("invalid bool param: %s; key: %s; err: %v; typeErr:%w",
+			param, key, err, core_errors.ErrInvalidArgument)
+	}
+
+	return &queryParam, nil
+}
+
+func GetReadQueryParam(r *http.Request) (*bool, error) {
+	const readQueryParam = "read"
+
+	read, err := getBoolQueryParam(r, readQueryParam)
+	if err != nil {
+		return nil, fmt.Errorf("get read query param: %w", err)
+	}
+
+	return read, nil
 }

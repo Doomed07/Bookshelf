@@ -17,7 +17,7 @@ var (
 
 type APIVersionRouter struct {
 	*http.ServeMux
-	apiVersion ApiVersion
+	apiVersion  ApiVersion
 	middlewares []core_http_middleware.Middleware
 }
 
@@ -26,8 +26,8 @@ func NewAPIVersionRouter(
 	middleware ...core_http_middleware.Middleware,
 ) *APIVersionRouter {
 	return &APIVersionRouter{
-		ServeMux:   http.NewServeMux(),
-		apiVersion: apiVersion,
+		ServeMux:    http.NewServeMux(),
+		apiVersion:  apiVersion,
 		middlewares: middleware,
 	}
 }
@@ -44,7 +44,7 @@ func (r *APIVersionRouter) RegisterRoutes(routes ...Route) {
 
 func (r *APIVersionRouter) WithMiddleware() http.Handler {
 	return core_http_middleware.ChainMiddleware(
-		r, 
+		r,
 		r.middlewares...,
 	)
 }

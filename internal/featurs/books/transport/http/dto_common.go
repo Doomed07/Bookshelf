@@ -18,7 +18,7 @@ type BookDTOResponse struct {
 	ReadsCount  int      `json:"reads_count"`
 }
 
-func bookDTOFromDomain(book domain.Book) BookDTOResponse {
+func BookDTOFromDomain(book domain.Book) BookDTOResponse {
 	return BookDTOResponse{
 		ID:          book.ID,
 		Title:       book.Title,
@@ -36,7 +36,7 @@ func booksDTOFromDomains(books []domain.Book) []BookDTOResponse {
 	booksDTO := make([]BookDTOResponse, len(books))
 
 	for i, v := range books {
-		booksDTO[i] = bookDTOFromDomain(v)
+		booksDTO[i] = BookDTOFromDomain(v)
 	}
 
 	return booksDTO

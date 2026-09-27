@@ -20,7 +20,7 @@ func (r *BooksRepository) GetBooks(
 	FROM bookshelfapp.books
 	WHERE ($1::text IS NULL OR title ILIKE $1)
 	  AND ($2::text IS NULL OR author ILIKE $2)
-	ORDER BY id ASC
+	ORDER BY title, id ASC
 	LIMIT $3
 	OFFSET $4;
 	`
