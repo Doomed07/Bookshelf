@@ -1,9 +1,7 @@
 package users_transport_http
 
 import (
-	"fmt"
 	"net/http"
-	"unicode/utf8"
 
 	"github.com/Doomed07/Bookshelf/internal/core/domain"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
@@ -15,31 +13,6 @@ import (
 type PatchUserRequest struct {
 	Username core_http_types.Nullable[string] `json:"username"`
 	Email    core_http_types.Nullable[string] `json:"email"`
-}
-
-func (p *PatchUserRequest) Validate() error {
-	if p.Username.Set {
-		if p.Username.Value == nil {
-			return fmt.Errorf("'username' can't be NULL")
-		}
-
-		usernameLen := utf8.RuneCountInString(*p.Username.Value)
-		if usernameLen < 3 || usernameLen > 30 {
-			return fmt.Errorf("'username' must be between 3 and 30 symbols")
-		}
-	}
-
-	if p.Email.Set {
-		if p.Email.Value == nil {
-			return fmt.Errorf("'email' can't be NULL")
-		}
-		emailLen := utf8.RuneCountInString(*p.Email.Value)
-		if emailLen > 254 {
-			return fmt.Errorf("'email' not more then 254 symbols")
-		}
-	}
-
-	return nil
 }
 
 func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
