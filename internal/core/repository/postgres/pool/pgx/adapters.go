@@ -21,9 +21,14 @@ func (r pgxRow) Scan(dest ...any) error {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return core_postgres_pool.ErrNoRows
 		}
+
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return core_postgres_pool.ErrUniqueViolation
+		}
+
+		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
+			return core_postgres_pool.ErrForeignKeyViolation
 		}
 
 		return err

@@ -14,6 +14,9 @@ import (
 	books_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/books/repository/postgres"
 	books_service "github.com/Doomed07/Bookshelf/internal/featurs/books/service"
 	books_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/books/transport/http"
+	bookshelf_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/repository/postgres"
+	bookshelf_service "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/service"
+	bookshelf_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/transport/http"
 	users_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/users/repository/postgres"
 	users_service "github.com/Doomed07/Bookshelf/internal/featurs/users/service"
 	users_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/users/transport/http"
@@ -46,6 +49,7 @@ func main() {
 
 	logger.Debug("initializing feature", zap.String("feature", "Users"))
 	logger.Debug("initializing feature", zap.String("feature", "Books"))
+	logger.Debug("initializing feature", zap.String("feature", "Bookshelf"))
 
 	usersRepository := users_repository_postgres.NewUsersRepository(pool)
 	usersService := users_service.NewUsersService(usersRepository)
@@ -53,6 +57,9 @@ func main() {
 	booksRepository := books_repository_postgres.NewBooksRepository(pool)
 	booksService := books_service.NewBooksService(booksRepository)
 	booksTransportHTTP := books_transport_http.NewBooksHTTPHandler(booksService)
+	bookshelfRepository := bookshelf_repository_postgres.NewBookshelfRepository(pool)
+	bookshelfService := bookshelf_service.NewBookshelfService(bookshelfRepository)
+	bookshelfTransportHTTP := bookshelf_transport_http.NewBookshelfHTTPHandler(bookshelfService)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -67,6 +74,7 @@ func main() {
 	apiVersionRouterV1 := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
 	apiVersionRouterV1.RegisterRoutes(usersTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(booksTransportHTTP.Routes()...)
+	apiVersionRouterV1.RegisterRoutes(bookshelfTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 

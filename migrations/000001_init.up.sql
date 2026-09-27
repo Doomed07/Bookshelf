@@ -20,8 +20,14 @@ CREATE TABLE bookshelfapp.books (
     pages       SMALLINT NOT NULL,
     genres      VARCHAR(200)[] NOT NULL,
     description VARCHAR(2000) NOT NULL,
-    score       SMALLINT,
-    reads_count INT NOT NULL DEFAULT 0, 
+    rating_sum   INT NOT NULL DEFAULT 0,
+    rating_count INT NOT NULL DEFAULT 0,
+    reads_count  INT NOT NULL DEFAULT 0,
+    score        SMALLINT GENERATED ALWAYS AS (
+        CASE WHEN rating_count > 0
+             THEN round(rating_sum::numeric / rating_count)::smallint
+        END
+    ) STORED,
 
     CONSTRAINT books_title_format  CHECK (char_length(title) >= 1 AND title = btrim(title)),
     CONSTRAINT books_author_format CHECK (char_length(author) >= 1 AND author = btrim(author)),
@@ -30,7 +36,9 @@ CREATE TABLE bookshelfapp.books (
     CONSTRAINT books_genres_not_empty CHECK (cardinality(genres) >= 1),
     CONSTRAINT books_description_format CHECK (char_length(description) >= 1 AND description = btrim(description)),
     CONSTRAINT books_score_range CHECK (score BETWEEN 1 AND 100),
-    CONSTRAINT books_reads_count_range CHECK (reads_count >= 0)
+    CONSTRAINT books_reads_count_range CHECK (reads_count >= 0),
+    CONSTRAINT books_rating_sum_range   CHECK (rating_sum >= 0),
+    CONSTRAINT books_rating_count_range CHECK (rating_count >= 0)
 );
 
 CREATE UNIQUE INDEX books_title_author_uniq
@@ -58,4 +66,37 @@ CREATE TABLE bookshelfapp.bookshelf (
 );
 
 CREATE INDEX bookshelf_book_id_idx ON bookshelfapp.bookshelf (book_id);
+CREATE INDEX books_score_idx       ON bookshelfapp.books (score DESC NULLS LAST, id);
+CREATE INDEX books_reads_count_idx ON bookshelfapp.books (reads_count DESC, id);
 
+CREATE FUNCTION bookshelfapp.update_book_stats() RETURNS trigger AS $$
+BEGIN
+    IF TG_OP = 'UPDATE'
+        AND OLD.read = NEW.read
+        AND OLD.rating IS NOT DISTINCT FROM NEW.rating THEN
+        RETURN NULL;
+    END IF;
+
+    IF TG_OP IN ('UPDATE', 'DELETE') THEN
+        UPDATE bookshelfapp.books SET
+            rating_sum   = rating_sum   - COALESCE(OLD.rating, 0),
+            rating_count = rating_count - (OLD.rating IS NOT NULL)::int,
+            reads_count  = reads_count  - OLD.read::int
+        WHERE id = OLD.book_id;
+    END IF;
+
+    IF TG_OP IN ('INSERT', 'UPDATE') THEN
+        UPDATE bookshelfapp.books SET
+            rating_sum   = rating_sum   + COALESCE(NEW.rating, 0),
+            rating_count = rating_count + (NEW.rating IS NOT NULL)::int,
+            reads_count  = reads_count  + NEW.read::int
+        WHERE id = NEW.book_id;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER bookshelf_update_book_stats
+AFTER INSERT OR DELETE OR UPDATE OF read, rating ON bookshelfapp.bookshelf
+FOR EACH ROW EXECUTE FUNCTION bookshelfapp.update_book_stats();
