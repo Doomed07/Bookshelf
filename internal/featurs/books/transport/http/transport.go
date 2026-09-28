@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 
@@ -13,9 +13,9 @@ type BooksHTTPHandler struct {
 }
 
 type BooksService interface {
-	GetBooks(ctx context.Context, title, author *string, limit, offset *int) ([]domain.Book, error)
-	GetBook(ctx context.Context, id int) (domain.Book, error)
-	GetReviews(ctx context.Context, id int, limit, offset *int) ([]domain.Review, error)
+	GetBooks(ctx context.Context, title, author *string, limit, offset *int) ([]core_domain.Book, error)
+	GetBook(ctx context.Context, id int) (core_domain.Book, error)
+	GetReviews(ctx context.Context, id int, limit, offset *int) ([]core_domain.Review, error)
 }
 
 func NewBooksHTTPHandler(booksService BooksService) *BooksHTTPHandler {

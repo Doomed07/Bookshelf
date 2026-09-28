@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
 func (r *BookshelfRepository) PatchBook(
 	ctx context.Context,
-	shelfBook domain.ShelfBook,
-) (domain.ShelfBook, error) {
+	shelfBook core_domain.ShelfBook,
+) (core_domain.ShelfBook, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -47,15 +47,15 @@ func (r *BookshelfRepository) PatchBook(
 	)
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrNoRows) {
-			return domain.ShelfBook{}, fmt.Errorf(
+			return core_domain.ShelfBook{}, fmt.Errorf(
 				"book %d on bookshelf of user %d was modified concurrently: %w",
 				shelfBook.BookID, shelfBook.UserID, core_errors.ErrConflict)
 		}
-		return domain.ShelfBook{}, fmt.Errorf("scan query row: %w", err)
+		return core_domain.ShelfBook{}, fmt.Errorf("scan query row: %w", err)
 
 	}
 
-	shelfDomain := domain.NewShelfBook(
+	shelfDomain := core_domain.NewShelfBook(
 		s.UserID,
 		s.BookID,
 		s.Version,

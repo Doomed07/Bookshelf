@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 )
 
@@ -13,7 +13,7 @@ func (s *BooksService) GetBooks(
 	ctx context.Context,
 	title, author *string,
 	limit, offset *int,
-) ([]domain.Book, error) {
+) ([]core_domain.Book, error) {
 	if title != nil && utf8.RuneCountInString(*title) > 200 {
 		return nil, fmt.Errorf("'title' search is longer than 200 symbols: %w", core_errors.ErrInvalidArgument)
 	}
@@ -22,7 +22,7 @@ func (s *BooksService) GetBooks(
 		return nil, fmt.Errorf("'author' search is longer than 100 symbols: %w", core_errors.ErrInvalidArgument)
 	}
 
-	lim, off, err := domain.NormalizePagination(limit, offset)
+	lim, off, err := core_domain.NormalizePagination(limit, offset)
 	if err != nil {
 		return nil, err
 	}

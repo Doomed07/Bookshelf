@@ -3,7 +3,7 @@ package bookshelf_service
 import (
 	"context"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type BookshelfService struct {
@@ -11,12 +11,12 @@ type BookshelfService struct {
 }
 
 type BookshelfRepository interface {
-	AddBook(ctx context.Context, userID, bookID int) (domain.ShelfBook, error)
-	GetBook(ctx context.Context, userID, bookID int) (domain.ShelfBookWithBook, error)
-	GetBooks(ctx context.Context, userID int, read *bool, limit, offset int) ([]domain.ShelfBookWithBook, error)
+	AddBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBook, error)
+	GetBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error)
+	GetBooks(ctx context.Context, userID int, read *bool, limit, offset int) ([]core_domain.ShelfBookWithBook, error)
 	UserExists(ctx context.Context, userID int) (bool, error)
-	GetUserActivity(ctx context.Context, userID int, limit, offset int) ([]domain.Event, error)
-	PatchBook(ctx context.Context, shelfBook domain.ShelfBook) (domain.ShelfBook, error)
+	GetUserActivity(ctx context.Context, userID int, limit, offset int) ([]core_domain.Event, error)
+	PatchBook(ctx context.Context, shelfBook core_domain.ShelfBook) (core_domain.ShelfBook, error)
 	RemoveBook(ctx context.Context, userID, bookID int) error
 }
 

@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (r *BooksRepository) GetReviews(ctx context.Context, id, limit, offset int) ([]domain.Review, error) {
+func (r *BooksRepository) GetReviews(ctx context.Context, id, limit, offset int) ([]core_domain.Review, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

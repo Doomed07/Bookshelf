@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	core_config "github.com/Doomed07/Bookshelf/internal/core/config"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	core_postgres_pgx "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
@@ -24,6 +26,9 @@ import (
 )
 
 func main() {
+	cfg := core_config.NewConfigMust()
+	time.Local = cfg.TimeZone
+
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
 		syscall.SIGINT, syscall.SIGTERM,
@@ -37,6 +42,8 @@ func main() {
 	}
 	defer logger.Close()
 
+	logger.Debug("application time zone", zap.Any("zone", time.Local))
+
 	logger.Debug("initializing connection pool")
 	pool, err := core_postgres_pgx.NewConnPool(
 		core_postgres_pgx.NewConfigMust(),
@@ -48,15 +55,16 @@ func main() {
 	defer pool.Close()
 
 	logger.Debug("initializing feature", zap.String("feature", "Users"))
-	logger.Debug("initializing feature", zap.String("feature", "Books"))
-	logger.Debug("initializing feature", zap.String("feature", "Bookshelf"))
-
 	usersRepository := users_repository_postgres.NewUsersRepository(pool)
 	usersService := users_service.NewUsersService(usersRepository)
 	usersTransportHTTP := users_transport_http.NewUsersHTTPHandler(usersService)
+
+	logger.Debug("initializing feature", zap.String("feature", "Books"))
 	booksRepository := books_repository_postgres.NewBooksRepository(pool)
 	booksService := books_service.NewBooksService(booksRepository)
 	booksTransportHTTP := books_transport_http.NewBooksHTTPHandler(booksService)
+
+	logger.Debug("initializing feature", zap.String("feature", "Bookshelf"))
 	bookshelfRepository := bookshelf_repository_postgres.NewBookshelfRepository(pool)
 	bookshelfService := bookshelf_service.NewBookshelfService(bookshelfRepository)
 	bookshelfTransportHTTP := bookshelf_transport_http.NewBookshelfHTTPHandler(bookshelfService)

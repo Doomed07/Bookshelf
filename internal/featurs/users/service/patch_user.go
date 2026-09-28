@@ -4,22 +4,22 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (s *UsersService) PatchUser(ctx context.Context, id int, patch domain.UserPatch) (domain.User, error) {
+func (s *UsersService) PatchUser(ctx context.Context, id int, patch core_domain.UserPatch) (core_domain.User, error) {
 	user, err := s.usersRepository.GetUser(ctx, id)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("failed to get user from repo: %w", err)
+		return core_domain.User{}, fmt.Errorf("failed to get user from repo: %w", err)
 	}
 
 	if err := user.ApplyPatch(patch); err != nil {
-		return domain.User{}, fmt.Errorf("apply user patch: %w", err)
+		return core_domain.User{}, fmt.Errorf("apply user patch: %w", err)
 	}
 
 	patchedUser, err := s.usersRepository.PatchUser(ctx, id, user)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("patch user: %w", err)
+		return core_domain.User{}, fmt.Errorf("patch user: %w", err)
 	}
 
 	return patchedUser, nil

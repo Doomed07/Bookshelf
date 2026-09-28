@@ -3,7 +3,7 @@ package users_transport_http
 import (
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	core_http_request "github.com/Doomed07/Bookshelf/internal/core/transport/http/request"
 	core_http_response "github.com/Doomed07/Bookshelf/internal/core/transport/http/response"
@@ -40,6 +40,6 @@ func (h *UsersHTTPHandler) CreateUser(rw http.ResponseWriter, r *http.Request) {
 	responseHandler.JSONResponse(http.StatusCreated, response)
 }
 
-func domainFromDTO(dto CreateUserRequest) domain.User {
-	return domain.NewUserUninitialized(dto.Username, dto.Email)
+func domainFromDTO(dto CreateUserRequest) core_domain.User {
+	return core_domain.NewUserUninitialized(dto.Username, dto.Email)
 }

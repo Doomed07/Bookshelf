@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
-func (r *BookshelfRepository) AddBook(ctx context.Context, userID, bookID int) (domain.ShelfBook, error) {
+func (r *BookshelfRepository) AddBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBook, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -36,17 +36,17 @@ func (r *BookshelfRepository) AddBook(ctx context.Context, userID, bookID int) (
 	if err != nil {
 		switch {
 		case errors.Is(err, core_postgres_pool.ErrUniqueViolation):
-			return domain.ShelfBook{}, fmt.Errorf(
+			return core_domain.ShelfBook{}, fmt.Errorf(
 				"book %d already on bookshelf of user %d: %w", bookID, userID, core_errors.ErrConflict)
 		case errors.Is(err, core_postgres_pool.ErrForeignKeyViolation):
-			return domain.ShelfBook{}, fmt.Errorf(
+			return core_domain.ShelfBook{}, fmt.Errorf(
 				"user %d or book %d: %w", userID, bookID, core_errors.ErrNotFound)
 		default:
-			return domain.ShelfBook{}, fmt.Errorf("scan query row: %w", err)
+			return core_domain.ShelfBook{}, fmt.Errorf("scan query row: %w", err)
 		}
 	}
 
-	shelfDomain := domain.NewShelfBook(
+	shelfDomain := core_domain.NewShelfBook(
 		shelf.UserID,
 		shelf.BookID,
 		shelf.Version,

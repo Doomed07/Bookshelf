@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 func (s *UsersService) GetUsers(
 	ctx context.Context,
 	limit, offset *int,
-) ([]domain.User, error) {
-	lim, off, err := domain.NormalizePagination(limit, offset)
+) ([]core_domain.User, error) {
+	lim, off, err := core_domain.NormalizePagination(limit, offset)
 	if err != nil {
 		return nil, err
 	}

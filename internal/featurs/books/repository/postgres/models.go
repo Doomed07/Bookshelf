@@ -3,7 +3,7 @@ package books_repository_postgres
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type BookModel struct {
@@ -18,8 +18,8 @@ type BookModel struct {
 	ReadsCount  int
 }
 
-func bookDomainFromModel(book BookModel) domain.Book {
-	return domain.NewBook(
+func bookDomainFromModel(book BookModel) core_domain.Book {
+	return core_domain.NewBook(
 		book.ID,
 		book.Title,
 		book.Author,
@@ -32,8 +32,8 @@ func bookDomainFromModel(book BookModel) domain.Book {
 	)
 }
 
-func booksDomainsFromModels(books []BookModel) []domain.Book {
-	booksDomain := make([]domain.Book, len(books))
+func booksDomainsFromModels(books []BookModel) []core_domain.Book {
+	booksDomain := make([]core_domain.Book, len(books))
 	for i, book := range books {
 		booksDomain[i] = bookDomainFromModel(book)
 	}
@@ -49,8 +49,8 @@ type ReviewModel struct {
 	ReadAt   time.Time
 }
 
-func reviewDomainFromModel(review ReviewModel) domain.Review {
-	return domain.NewReview(
+func reviewDomainFromModel(review ReviewModel) core_domain.Review {
+	return core_domain.NewReview(
 		review.UserID,
 		review.Username,
 		review.Rating,
@@ -59,8 +59,8 @@ func reviewDomainFromModel(review ReviewModel) domain.Review {
 	)
 }
 
-func reviewsDomainsFromModels(reviews []ReviewModel) []domain.Review {
-	reviewsDomain := make([]domain.Review, len(reviews))
+func reviewsDomainsFromModels(reviews []ReviewModel) []core_domain.Review {
+	reviewsDomain := make([]core_domain.Review, len(reviews))
 	for i, r := range reviews {
 		reviewsDomain[i] = reviewDomainFromModel(r)
 	}

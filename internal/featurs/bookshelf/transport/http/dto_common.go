@@ -3,7 +3,7 @@ package bookshelf_transport_http
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	books_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/books/transport/http"
 )
 
@@ -18,7 +18,7 @@ type ShelfBookDTOResponse struct {
 	ReadAt  *time.Time `json:"read_at"`
 }
 
-func shelfBookDTOFromDomain(shelf domain.ShelfBook) ShelfBookDTOResponse {
+func shelfBookDTOFromDomain(shelf core_domain.ShelfBook) ShelfBookDTOResponse {
 	return ShelfBookDTOResponse{
 		UserID:  shelf.UserID,
 		BookID:  shelf.BookID,
@@ -36,14 +36,14 @@ type ShelfBookWithBookDTOResponse struct {
 	Book      books_transport_http.BookDTOResponse `json:"book"`
 }
 
-func shelfBookWithBookDTOFromDomain(s domain.ShelfBookWithBook) ShelfBookWithBookDTOResponse {
+func shelfBookWithBookDTOFromDomain(s core_domain.ShelfBookWithBook) ShelfBookWithBookDTOResponse {
 	return ShelfBookWithBookDTOResponse{
 		ShelfBook: shelfBookDTOFromDomain(s.ShelfBook),
 		Book:      books_transport_http.BookDTOFromDomain(s.Book),
 	}
 }
 
-func booksFBSDTOFromDomain(b []domain.ShelfBookWithBook) []ShelfBookWithBookDTOResponse {
+func booksFBSDTOFromDomain(b []core_domain.ShelfBookWithBook) []ShelfBookWithBookDTOResponse {
 	booksDTO := make([]ShelfBookWithBookDTOResponse, len(b))
 	for i, v := range b {
 		booksDTO[i] = shelfBookWithBookDTOFromDomain(v)
@@ -61,7 +61,7 @@ type EventDTO struct {
 	At     time.Time `json:"at"`
 }
 
-func eventDTOFromDomain(d domain.Event) EventDTO {
+func eventDTOFromDomain(d core_domain.Event) EventDTO {
 	return EventDTO{
 		Name:   d.Name,
 		BookID: d.BookID,
@@ -73,7 +73,7 @@ func eventDTOFromDomain(d domain.Event) EventDTO {
 	}
 }
 
-func eventsDTOFromDomain(d []domain.Event) []EventDTO {
+func eventsDTOFromDomain(d []core_domain.Event) []EventDTO {
 	events := make([]EventDTO, len(d))
 	for i, v := range d {
 		events[i] = eventDTOFromDomain(v)

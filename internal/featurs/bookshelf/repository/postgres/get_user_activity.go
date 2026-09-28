@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (r *BookshelfRepository) GetUserActivity(ctx context.Context, userID int, limit, offset int) ([]domain.Event, error) {
+func (r *BookshelfRepository) GetUserActivity(ctx context.Context, userID int, limit, offset int) ([]core_domain.Event, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

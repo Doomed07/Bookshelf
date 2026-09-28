@@ -3,7 +3,7 @@ package bookshelf_transport_http
 import (
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	core_http_request "github.com/Doomed07/Bookshelf/internal/core/transport/http/request"
 	core_http_response "github.com/Doomed07/Bookshelf/internal/core/transport/http/response"
@@ -16,8 +16,8 @@ type PatchShelfBookRequest struct {
 	Review core_http_types.Nullable[string] `json:"review"`
 }
 
-func shelfBookPatchDomainFromRequest(r PatchShelfBookRequest) domain.ShelfBookPatch {
-	return domain.NewShelfBookPatch(
+func shelfBookPatchDomainFromRequest(r PatchShelfBookRequest) core_domain.ShelfBookPatch {
+	return core_domain.NewShelfBookPatch(
 		r.Read.ToDomain(),
 		r.Rating.ToDomain(),
 		r.Review.ToDomain(),

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 )
 
@@ -13,8 +13,8 @@ func (s *BookshelfService) GetBooks(
 	userID int,
 	read *bool,
 	limit, offset *int,
-) ([]domain.ShelfBookWithBook, error) {
-	lim, off, err := domain.NormalizePagination(limit, offset)
+) ([]core_domain.ShelfBookWithBook, error) {
+	lim, off, err := core_domain.NormalizePagination(limit, offset)
 	if err != nil {
 		return nil, err
 	}

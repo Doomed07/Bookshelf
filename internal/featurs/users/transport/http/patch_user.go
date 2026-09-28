@@ -3,7 +3,7 @@ package users_transport_http
 import (
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	core_http_request "github.com/Doomed07/Bookshelf/internal/core/transport/http/request"
 	core_http_response "github.com/Doomed07/Bookshelf/internal/core/transport/http/response"
@@ -15,8 +15,8 @@ type PatchUserRequest struct {
 	Email    core_http_types.Nullable[string] `json:"email"`
 }
 
-func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
-	return domain.NewUserPatch(
+func userPatchFromRequest(request PatchUserRequest) core_domain.UserPatch {
+	return core_domain.NewUserPatch(
 		request.Username.ToDomain(),
 		request.Email.ToDomain(),
 	)

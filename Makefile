@@ -74,6 +74,15 @@ migrate-force:
 	-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@bookshelfapp-postgres:5432/${POSTGRES_DB}?sslmode=disable \
 	force "${version}"
 
+logs-cleanup:
+	@read -p "Do you really want to clear logfiles? Risk of logs loss. [y/N]: " ans; \
+	if [ "$$ans" = "y" ]; then \
+		rm -rf ${PROJECT_ROOT}/out/logs && \
+		echo "log files have been removed"; \
+	else \
+		echo "log files cleanup cancelled"; \
+	fi
+
 app-run:
 	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
 	export POSTGRES_HOST=localhost && \

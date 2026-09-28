@@ -1,4 +1,4 @@
-package domain
+package core_domain
 
 import (
 	"fmt"
@@ -110,7 +110,7 @@ func (p *ShelfBookPatch) Validate() error {
 	return nil
 }
 
-func (s *ShelfBook) ApplyPatch(patch ShelfBookPatch, now time.Time) error {
+func (s *ShelfBook) ApplyPatch(patch ShelfBookPatch) error {
 	if err := patch.Validate(); err != nil {
 		return fmt.Errorf("validate shelfbook patch: %w", err)
 	}
@@ -120,11 +120,7 @@ func (s *ShelfBook) ApplyPatch(patch ShelfBookPatch, now time.Time) error {
 	if patch.Read.Set {
 		switch {
 		case *patch.Read.Value && !temp.Read:
-			if now.Before(temp.AddedAt) {
-				now = temp.AddedAt
-			}
-			temp.Read = true
-			temp.ReadAt = &now
+			temp.markRead()
 		case !*patch.Read.Value && temp.Read:
 			temp.markUnread()
 		}
@@ -153,6 +149,15 @@ func (s *ShelfBook) ApplyPatch(patch ShelfBookPatch, now time.Time) error {
 	return nil
 }
 
+func (s *ShelfBook) markRead() {
+	readAt := time.Now().UTC()
+	if readAt.Before(s.AddedAt) {
+		readAt = s.AddedAt
+	}
+	s.Read = true
+	s.ReadAt = &readAt
+}
+
 func (s *ShelfBook) markUnread() {
 	s.Read = false
 	s.Rating = nil
@@ -161,7 +166,7 @@ func (s *ShelfBook) markUnread() {
 }
 
 type Event struct {
-	Name   string // "added" или "finished"
+	Name   string
 	BookID int
 	Title  string
 	Author string

@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
-func (r *BookshelfRepository) GetBook(ctx context.Context, userID, bookID int) (domain.ShelfBookWithBook, error) {
+func (r *BookshelfRepository) GetBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -45,10 +45,11 @@ func (r *BookshelfRepository) GetBook(ctx context.Context, userID, bookID int) (
 	)
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrNoRows) {
-			return domain.ShelfBookWithBook{}, fmt.Errorf(
-				"book %d on bookshelf of user %d: %w", bookID, userID, core_errors.ErrNotFound)
+			return core_domain.ShelfBookWithBook{}, fmt.Errorf(
+				"book with id: %d on bookshelf of user with id: %d. Error: %w",
+				bookID, userID, core_errors.ErrNotFound)
 		}
-		return domain.ShelfBookWithBook{}, fmt.Errorf("scan query row: %w", err)
+		return core_domain.ShelfBookWithBook{}, fmt.Errorf("scan query row: %w", err)
 	}
 
 	SBWBDomain := domainSBWBFromModel(shelf)

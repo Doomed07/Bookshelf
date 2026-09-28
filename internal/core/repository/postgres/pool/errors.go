@@ -6,4 +6,5 @@ var (
 	ErrNoRows              = errors.New("no rows")
 	ErrUniqueViolation     = errors.New("unique violation")
 	ErrForeignKeyViolation = errors.New("foreign key violation")
+	ErrUnknown             = errors.New("unknown error")
 )

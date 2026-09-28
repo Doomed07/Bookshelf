@@ -3,7 +3,7 @@ package books_transport_http
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type BookDTOResponse struct {
@@ -18,7 +18,7 @@ type BookDTOResponse struct {
 	ReadsCount  int      `json:"reads_count"`
 }
 
-func BookDTOFromDomain(book domain.Book) BookDTOResponse {
+func BookDTOFromDomain(book core_domain.Book) BookDTOResponse {
 	return BookDTOResponse{
 		ID:          book.ID,
 		Title:       book.Title,
@@ -32,7 +32,7 @@ func BookDTOFromDomain(book domain.Book) BookDTOResponse {
 	}
 }
 
-func booksDTOFromDomains(books []domain.Book) []BookDTOResponse {
+func booksDTOFromDomains(books []core_domain.Book) []BookDTOResponse {
 	booksDTO := make([]BookDTOResponse, len(books))
 
 	for i, v := range books {
@@ -50,7 +50,7 @@ type ReviewDTOResponse struct {
 	ReadAt   time.Time `json:"read_at"`
 }
 
-func reviewDTOFromDomain(review domain.Review) ReviewDTOResponse {
+func reviewDTOFromDomain(review core_domain.Review) ReviewDTOResponse {
 	return ReviewDTOResponse{
 		UserID:   review.UserID,
 		Username: review.Username,
@@ -60,7 +60,7 @@ func reviewDTOFromDomain(review domain.Review) ReviewDTOResponse {
 	}
 }
 
-func reviewsDTOFromDomains(reviews []domain.Review) []ReviewDTOResponse {
+func reviewsDTOFromDomains(reviews []core_domain.Review) []ReviewDTOResponse {
 	reviewsDTO := make([]ReviewDTOResponse, len(reviews))
 
 	for i, r := range reviews {

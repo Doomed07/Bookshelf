@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
-func (r *BooksRepository) GetBook(ctx context.Context, id int) (domain.Book, error) {
+func (r *BooksRepository) GetBook(ctx context.Context, id int) (core_domain.Book, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -36,10 +36,10 @@ func (r *BooksRepository) GetBook(ctx context.Context, id int) (domain.Book, err
 	)
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrNoRows) {
-			return domain.Book{}, fmt.Errorf(
+			return core_domain.Book{}, fmt.Errorf(
 				"book with id %d: %w", id, core_errors.ErrNotFound)
 		}
-		return domain.Book{}, fmt.Errorf("failed to scan row: %w", err)
+		return core_domain.Book{}, fmt.Errorf("failed to scan row: %w", err)
 	}
 
 	bookDomain := bookDomainFromModel(b)
