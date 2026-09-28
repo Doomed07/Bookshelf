@@ -3,11 +3,11 @@ package core_http_types
 import (
 	"encoding/json"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type Nullable[T any] struct {
-	domain.Nullable[T]
+	core_domain.Nullable[T]
 }
 
 func (n *Nullable[T]) UnmarshalJSON(b []byte) error {
@@ -28,8 +28,8 @@ func (n *Nullable[T]) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (n *Nullable[T]) ToDomain() domain.Nullable[T] {
-	return domain.Nullable[T]{
+func (n *Nullable[T]) ToDomain() core_domain.Nullable[T] {
+	return core_domain.Nullable[T]{
 		Value: n.Value,
 		Set:   n.Set,
 	}

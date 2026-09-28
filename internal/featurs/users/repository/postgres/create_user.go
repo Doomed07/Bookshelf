@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
 func (r *UsersRepository) CreateUser(
 	ctx context.Context,
-	user domain.User,
-) (domain.User, error) {
+	user core_domain.User,
+) (core_domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -34,14 +34,14 @@ func (r *UsersRepository) CreateUser(
 	)
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrUniqueViolation) {
-			return domain.User{}, fmt.Errorf(
+			return core_domain.User{}, fmt.Errorf(
 				"user with username %q or email %q already exists: %w",
 				user.Username, user.Email, core_errors.ErrConflict)
 		}
-		return domain.User{}, fmt.Errorf("scan query row: %w", err)
+		return core_domain.User{}, fmt.Errorf("scan query row: %w", err)
 	}
 
-	userDomain := domain.NewUser(
+	userDomain := core_domain.NewUser(
 		userModel.ID,
 		userModel.Version,
 		userModel.Username,

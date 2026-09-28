@@ -3,7 +3,7 @@ package bookshelf_repository_postgres
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type ShelfBookModel struct {
@@ -34,8 +34,8 @@ type ShelfBookWithBookModel struct {
 	Book      BookModel
 }
 
-func domainSBWBFromModel(m ShelfBookWithBookModel) domain.ShelfBookWithBook {
-	return domain.NewShelfBookWithBook(
+func domainSBWBFromModel(m ShelfBookWithBookModel) core_domain.ShelfBookWithBook {
+	return core_domain.NewShelfBookWithBook(
 		m.ShelfBook.UserID,
 		m.ShelfBook.BookID,
 		m.ShelfBook.Version,
@@ -56,8 +56,8 @@ func domainSBWBFromModel(m ShelfBookWithBookModel) domain.ShelfBookWithBook {
 	)
 }
 
-func booksFBSdomainFromModel(m []ShelfBookWithBookModel) []domain.ShelfBookWithBook {
-	booksDomain := make([]domain.ShelfBookWithBook, len(m))
+func booksFBSdomainFromModel(m []ShelfBookWithBookModel) []core_domain.ShelfBookWithBook {
+	booksDomain := make([]core_domain.ShelfBookWithBook, len(m))
 	for i, v := range m {
 		booksDomain[i] = domainSBWBFromModel(v)
 	}
@@ -74,14 +74,14 @@ type EventModel struct {
 	At     time.Time
 }
 
-func eventDomainFromModel(m EventModel) domain.Event {
-	return domain.NewEvent(
+func eventDomainFromModel(m EventModel) core_domain.Event {
+	return core_domain.NewEvent(
 		m.Name, m.Title, m.Author, m.BookID, m.Rating, m.Review, m.At,
 	)
 }
 
-func eventsDomainFromModel(m []EventModel) []domain.Event {
-	events := make([]domain.Event, len(m))
+func eventsDomainFromModel(m []EventModel) []core_domain.Event {
+	events := make([]core_domain.Event, len(m))
 	for i, v := range m {
 		events[i] = eventDomainFromModel(v)
 	}

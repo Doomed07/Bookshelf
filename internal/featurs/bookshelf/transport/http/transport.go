@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 
@@ -13,11 +13,11 @@ type BookshelfHTTPHandler struct {
 }
 
 type BookshelfService interface {
-	AddBook(ctx context.Context, userID, bookID int) (domain.ShelfBookWithBook, error)
-	GetBook(ctx context.Context, userID, bookID int) (domain.ShelfBookWithBook, error)
-	GetBooks(ctx context.Context, userID int, read *bool, limit, offset *int) ([]domain.ShelfBookWithBook, error)
-	GetUserActivity(ctx context.Context, userID int, limit, offset *int) ([]domain.Event, error)
-	PatchBook(ctx context.Context, userID, bookID int, patch domain.ShelfBookPatch) (domain.ShelfBookWithBook, error)
+	AddBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error)
+	GetBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error)
+	GetBooks(ctx context.Context, userID int, read *bool, limit, offset *int) ([]core_domain.ShelfBookWithBook, error)
+	GetUserActivity(ctx context.Context, userID int, limit, offset *int) ([]core_domain.Event, error)
+	PatchBook(ctx context.Context, userID, bookID int, patch core_domain.ShelfBookPatch) (core_domain.ShelfBookWithBook, error)
 	RemoveBook(ctx context.Context, userID, bookID int) error
 }
 

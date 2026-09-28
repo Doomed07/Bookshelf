@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (s *BooksService) GetReviews(ctx context.Context, id int, limit, offset *int) ([]domain.Review, error) {
-	lim, off, err := domain.NormalizePagination(limit, offset)
+func (s *BooksService) GetReviews(ctx context.Context, id int, limit, offset *int) ([]core_domain.Review, error) {
+	lim, off, err := core_domain.NormalizePagination(limit, offset)
 	if err != nil {
 		return nil, err
 	}

@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 func (r *UsersRepository) GetUsers(
 	ctx context.Context,
 	limit, offset int,
-) ([]domain.User, error) {
+) ([]core_domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

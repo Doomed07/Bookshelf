@@ -1,4 +1,4 @@
-package domain
+package core_domain
 
 type Book struct {
 	ID          int

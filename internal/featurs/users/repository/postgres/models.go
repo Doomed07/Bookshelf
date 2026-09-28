@@ -3,7 +3,7 @@ package users_repository_postgres
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 type UserModel struct {
@@ -14,11 +14,11 @@ type UserModel struct {
 	CreatedAt time.Time
 }
 
-func userDomainsFromUserModels(users []UserModel) []domain.User {
-	userDomains := make([]domain.User, len(users))
+func userDomainsFromUserModels(users []UserModel) []core_domain.User {
+	userDomains := make([]core_domain.User, len(users))
 
 	for i, user := range users {
-		userDomains[i] = domain.NewUser(
+		userDomains[i] = core_domain.NewUser(
 			user.ID,
 			user.Version,
 			user.Username,

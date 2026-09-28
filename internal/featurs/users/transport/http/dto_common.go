@@ -1,6 +1,6 @@
 package users_transport_http
 
-import "github.com/Doomed07/Bookshelf/internal/core/domain"
+import "github.com/Doomed07/Bookshelf/internal/core/core_domain"
 
 type UserDTOResponse struct {
 	ID       int    `json:"id"`
@@ -9,7 +9,7 @@ type UserDTOResponse struct {
 	Email    string `json:"email"`
 }
 
-func userDTOFromDomain(user domain.User) UserDTOResponse {
+func userDTOFromDomain(user core_domain.User) UserDTOResponse {
 	return UserDTOResponse{
 		ID:       user.ID,
 		Version:  user.Version,
@@ -18,7 +18,7 @@ func userDTOFromDomain(user domain.User) UserDTOResponse {
 	}
 }
 
-func usersDTOFromDomains(users []domain.User) []UserDTOResponse {
+func usersDTOFromDomains(users []core_domain.User) []UserDTOResponse {
 	usersDTO := make([]UserDTOResponse, len(users))
 
 	for i, v := range users {

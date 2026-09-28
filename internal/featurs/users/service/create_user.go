@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 func (s *UsersService) CreateUser(
 	ctx context.Context,
-	user domain.User,
-) (domain.User, error) {
+	user core_domain.User,
+) (core_domain.User, error) {
 	if err := user.Validate(); err != nil {
-		return domain.User{}, fmt.Errorf("validate user domain: %w", err)
+		return core_domain.User{}, fmt.Errorf("validate user domain: %w", err)
 	}
 
 	user, err := s.usersRepository.CreateUser(ctx, user)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("create user: %w", err)
+		return core_domain.User{}, fmt.Errorf("create user: %w", err)
 	}
 
 	return user, nil

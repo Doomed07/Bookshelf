@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
 func (r *BooksRepository) GetBooks(
 	ctx context.Context,
 	title, author *string,
 	limit, offset int,
-) ([]domain.Book, error) {
+) ([]core_domain.Book, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

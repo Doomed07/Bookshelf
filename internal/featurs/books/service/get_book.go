@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (s *BooksService) GetBook(ctx context.Context, id int) (domain.Book, error) {
+func (s *BooksService) GetBook(ctx context.Context, id int) (core_domain.Book, error) {
 	bookDomain, err := s.booksRepository.GetBook(ctx, id)
 	if err != nil {
-		return domain.Book{}, fmt.Errorf("get book from repo: %w", err)
+		return core_domain.Book{}, fmt.Errorf("get book from repo: %w", err)
 	}
 
 	return bookDomain, nil

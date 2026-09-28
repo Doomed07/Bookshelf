@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 )
 
-func (r *UsersRepository) PatchUser(ctx context.Context, id int, user domain.User,
-) (domain.User, error) {
+func (r *UsersRepository) PatchUser(ctx context.Context, id int, user core_domain.User,
+) (core_domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -35,21 +35,21 @@ func (r *UsersRepository) PatchUser(ctx context.Context, id int, user domain.Use
 	if err != nil {
 		switch {
 		case errors.Is(err, core_postgres_pool.ErrNoRows):
-			return domain.User{}, fmt.Errorf(
+			return core_domain.User{}, fmt.Errorf(
 				"user with id %d was concurrently modified: %w",
 				id, core_errors.ErrConflict)
 
 		case errors.Is(err, core_postgres_pool.ErrUniqueViolation):
-			return domain.User{}, fmt.Errorf(
+			return core_domain.User{}, fmt.Errorf(
 				"user with username %q or email %q already exists: %w",
 				user.Username, user.Email, core_errors.ErrConflict)
 
 		default:
-			return domain.User{}, fmt.Errorf("scan query row: %w", err)
+			return core_domain.User{}, fmt.Errorf("scan query row: %w", err)
 		}
 	}
 
-	userDomain := domain.NewUser(
+	userDomain := core_domain.NewUser(
 		userModel.ID,
 		userModel.Version,
 		userModel.Username,

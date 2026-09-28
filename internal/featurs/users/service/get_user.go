@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 )
 
-func (s *UsersService) GetUser(ctx context.Context, id int) (domain.User, error) {
+func (s *UsersService) GetUser(ctx context.Context, id int) (core_domain.User, error) {
 	user, err := s.usersRepository.GetUser(ctx, id)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("get user from repo: %w", err)
+		return core_domain.User{}, fmt.Errorf("get user from repo: %w", err)
 	}
 
 	return user, nil

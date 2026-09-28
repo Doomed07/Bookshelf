@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 )
 
-func (s *BookshelfService) GetUserActivity(ctx context.Context, userID int, limit, offset *int) ([]domain.Event, error) {
-	lim, off, err := domain.NormalizePagination(limit, offset)
+func (s *BookshelfService) GetUserActivity(ctx context.Context, userID int, limit, offset *int) ([]core_domain.Event, error) {
+	lim, off, err := core_domain.NormalizePagination(limit, offset)
 	if err != nil {
 		return nil, err
 	}

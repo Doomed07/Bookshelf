@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 
@@ -13,10 +13,10 @@ type UsersHTTPHandler struct {
 }
 
 type UsersService interface {
-	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
-	GetUsers(ctx context.Context, limit, offset *int) ([]domain.User, error)
-	GetUser(ctx context.Context, id int) (domain.User, error)
-	PatchUser(ctx context.Context, id int, patch domain.UserPatch) (domain.User, error)
+	CreateUser(ctx context.Context, user core_domain.User) (core_domain.User, error)
+	GetUsers(ctx context.Context, limit, offset *int) ([]core_domain.User, error)
+	GetUser(ctx context.Context, id int) (core_domain.User, error)
+	PatchUser(ctx context.Context, id int, patch core_domain.UserPatch) (core_domain.User, error)
 	DeleteUser(ctx context.Context, id int) error
 }
 

@@ -2,6 +2,7 @@ package core_postgres_pgx
 
 import (
 	"errors"
+	"fmt"
 
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
 	"github.com/jackc/pgx/v5"
@@ -17,25 +18,40 @@ type pgxRow struct {
 }
 
 func (r pgxRow) Scan(dest ...any) error {
-	if err := r.Row.Scan(dest...); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return core_postgres_pool.ErrNoRows
-		}
-
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return core_postgres_pool.ErrUniqueViolation
-		}
-
-		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
-			return core_postgres_pool.ErrForeignKeyViolation
-		}
-
-		return err
+	err := r.Row.Scan(dest...)
+	if err != nil {
+		return mapErrors(err)
 	}
+
 	return nil
 }
 
 type pgxCommandTag struct {
 	pgconn.CommandTag
+}
+
+func mapErrors(err error) error {
+	const (
+		pgxForeignKeyViolationErrCode = "23503"
+		pgxUniqueViolationErrCode     = "23505"
+	)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return core_postgres_pool.ErrNoRows
+	}
+
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		if pgErr.Code == pgxUniqueViolationErrCode {
+			return fmt.Errorf("%v:%w",
+				err, core_postgres_pool.ErrUniqueViolation)
+		}
+		if pgErr.Code == pgxForeignKeyViolationErrCode {
+			return fmt.Errorf("%v:%w",
+				err, core_postgres_pool.ErrForeignKeyViolation)
+		}
+
+	}
+
+	return fmt.Errorf("%v:%w", err, core_postgres_pool.ErrUnknown)
 }
