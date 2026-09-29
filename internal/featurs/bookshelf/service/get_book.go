@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 func (s *BookshelfService) GetBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error) {

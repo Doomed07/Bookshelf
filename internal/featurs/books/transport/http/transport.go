@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 

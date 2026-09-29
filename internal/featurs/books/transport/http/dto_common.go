@@ -3,7 +3,7 @@ package books_transport_http
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 type BookDTOResponse struct {

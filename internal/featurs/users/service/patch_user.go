@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 func (s *UsersService) PatchUser(ctx context.Context, id int, patch core_domain.UserPatch) (core_domain.User, error) {

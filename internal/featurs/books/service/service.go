@@ -3,7 +3,7 @@ package books_service
 import (
 	"context"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 type BooksService struct {

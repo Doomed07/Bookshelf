@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 func (s *BooksService) GetReviews(ctx context.Context, id int, limit, offset *int) ([]core_domain.Review, error) {

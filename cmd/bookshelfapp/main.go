@@ -19,6 +19,9 @@ import (
 	bookshelf_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/repository/postgres"
 	bookshelf_service "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/service"
 	bookshelf_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/transport/http"
+	statistics_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/statistics/repository/postgres"
+	statistics_service "github.com/Doomed07/Bookshelf/internal/featurs/statistics/service"
+	statistics_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/statistics/transport/http"
 	users_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/users/repository/postgres"
 	users_service "github.com/Doomed07/Bookshelf/internal/featurs/users/service"
 	users_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/users/transport/http"
@@ -28,6 +31,8 @@ import (
 func main() {
 	cfg := core_config.NewConfigMust()
 	time.Local = cfg.TimeZone
+
+	statsConfig := statistics_service.NewConfigMust()
 
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
@@ -69,6 +74,11 @@ func main() {
 	bookshelfService := bookshelf_service.NewBookshelfService(bookshelfRepository)
 	bookshelfTransportHTTP := bookshelf_transport_http.NewBookshelfHTTPHandler(bookshelfService)
 
+	logger.Debug("initializing feature", zap.String("feature", "Statistics"))
+	statsRepository := statistics_repository_postgres.NewStatsRepository(pool)
+	statsService := statistics_service.NewStatsService(statsRepository, statsConfig)
+	statsTransportHTTP := statistics_transport_http.NewStatsHTTPHandler(statsService)
+
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
 		core_http_server.NewConfigMust(),
@@ -83,6 +93,7 @@ func main() {
 	apiVersionRouterV1.RegisterRoutes(usersTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(booksTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(bookshelfTransportHTTP.Routes()...)
+	apiVersionRouterV1.RegisterRoutes(statsTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 

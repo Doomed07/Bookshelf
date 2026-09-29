@@ -3,7 +3,7 @@ package bookshelf_transport_http
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 	books_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/books/transport/http"
 )
 

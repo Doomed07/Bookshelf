@@ -38,6 +38,20 @@ func NewShelfBook(
 	}
 }
 
+func (book *ShelfBook) ReadDuration() *time.Duration {
+	if !book.Read {
+		return nil
+	}
+
+	if book.ReadAt == nil {
+		return nil
+	}
+
+	duration := book.ReadAt.Sub(book.AddedAt)
+
+	return &duration
+}
+
 type ShelfBookWithBook struct {
 	ShelfBook ShelfBook
 	Book      Book

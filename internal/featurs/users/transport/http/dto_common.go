@@ -1,6 +1,6 @@
 package users_transport_http
 
-import "github.com/Doomed07/Bookshelf/internal/core/core_domain"
+import "github.com/Doomed07/Bookshelf/internal/core/domain"
 
 type UserDTOResponse struct {
 	ID       int    `json:"id"`
