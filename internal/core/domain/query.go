@@ -2,6 +2,7 @@ package core_domain
 
 import (
 	"fmt"
+	"time"
 
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 )
@@ -9,6 +10,8 @@ import (
 const (
 	DefaultLimit = 20
 	MaxLimit     = 100
+	DefaultTop   = 5
+	MaxTop       = 100
 )
 
 func NormalizePagination(limit, offset *int) (int, int, error) {
@@ -29,4 +32,25 @@ func NormalizePagination(limit, offset *int) (int, int, error) {
 	}
 
 	return lim, off, nil
+}
+
+func ValidateFromToQuery(from, to *time.Time) error {
+	if from != nil && to != nil && from.After(*to) {
+		return fmt.Errorf("'from' is after 'to': %w", core_errors.ErrInvalidArgument)
+	}
+
+	return nil
+}
+
+func NormalizeTopQueryParam(top *int) (int, error) {
+	t := DefaultTop
+
+	if top != nil {
+		if *top < 5 || *top > MaxTop {
+			return 0, fmt.Errorf("invalid 'top' query param: %w", core_errors.ErrInvalidArgument)
+		}
+		t = *top
+	}
+
+	return t, nil
 }

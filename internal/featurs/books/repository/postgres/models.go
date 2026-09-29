@@ -3,7 +3,7 @@ package books_repository_postgres
 import (
 	"time"
 
-	"github.com/Doomed07/Bookshelf/internal/core/core_domain"
+	"github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 type BookModel struct {
