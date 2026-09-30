@@ -88,3 +88,11 @@ app-run:
 	export POSTGRES_HOST=localhost && \
 	go mod tidy && \
 	go run ${PROJECT_ROOT}/cmd/bookshelfapp/main.go
+
+app-deploy:
+	@docker compose up -d --build bookshelfapp
+
+app-undeploy:
+	@docker compose down bookshelfapp
+ps:
+	@docker compose ps
