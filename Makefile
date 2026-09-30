@@ -92,5 +92,7 @@ app-run:
 app-deploy:
 	@docker compose up -d --build bookshelfapp
 
+app-undeploy:
+	@docker compose down bookshelfapp
 ps:
 	@docker compose ps
