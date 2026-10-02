@@ -94,5 +94,6 @@ app-deploy:
 
 app-undeploy:
 	@docker compose down bookshelfapp
+	
 ps:
 	@docker compose ps
