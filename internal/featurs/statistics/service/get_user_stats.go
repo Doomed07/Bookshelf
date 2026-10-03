@@ -44,7 +44,7 @@ func calcUserStatistics(books []core_domain.ShelfBookWithBook, from, to *time.Ti
 	for _, v := range books {
 		if inPeriod(v.ShelfBook.AddedAt, from, to) {
 			booksOnShelf++
-			if v.ShelfBook.Read && inPeriod(*v.ShelfBook.ReadAt, from, to) {
+			if v.ShelfBook.Read && v.ShelfBook.ReadAt != nil && inPeriod(*v.ShelfBook.ReadAt, from, to) {
 				addedAndRead++
 			}
 		}
