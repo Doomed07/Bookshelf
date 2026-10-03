@@ -10,12 +10,23 @@ import (
 )
 
 type CreateUserRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	Username string `json:"username" example:"book_worm07"`
+	Email    string `json:"email" example:"lol@mail.com"`
 }
 
 type CreateUserResponse UserDTOResponse
 
+// CreateUser   godoc
+// @Summary     Create user
+// @Description Create new user in the app
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Param       request body CreateUserRequest true "CreateUser request body"
+// @Success     201 {object} CreateUserResponse "Successed to create user"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /users [post]
 func (h *UsersHTTPHandler) CreateUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

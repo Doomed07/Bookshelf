@@ -22,6 +22,21 @@ type (
 	GetBookStatsResponse BookStatsDTO
 )
 
+// GetStats     godoc
+// @Summary     Get statistics
+// @Description Get system-wide statistics by default; pass user_id for per-user statistics or book_id for per-book statistics (mutually exclusive, response shape returned is GetStatsResponse/GetUserStatsResponse/GetBookStatsResponse respectively)
+// @Tags        statistics
+// @Produce     json
+// @Param       user_id query int    false "Get statistics for this user instead of system-wide (mutually exclusive with book_id)"
+// @Param       book_id query int    false "Get statistics for this book instead of system-wide (mutually exclusive with user_id)"
+// @Param       top     query int    false "Number of top books to return (system statistics only)"
+// @Param       from    query string false "Filter from date, format YYYY-MM-DD"
+// @Param       to      query string false "Filter to date, format YYYY-MM-DD"
+// @Success     200 {object} GetStatsResponse "System statistics"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "User or book not found"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /stats [get]
 func (h *StatsHTTPHandler) GetStats(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

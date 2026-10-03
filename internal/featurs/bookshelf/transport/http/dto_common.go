@@ -8,14 +8,14 @@ import (
 )
 
 type ShelfBookDTOResponse struct {
-	UserID  int        `json:"user_id"`
-	BookID  int        `json:"book_id"`
-	Version int        `json:"version"`
-	Read    bool       `json:"read"`
-	Rating  *int       `json:"rating"`
-	Review  *string    `json:"review"`
-	AddedAt time.Time  `json:"added_at"`
-	ReadAt  *time.Time `json:"read_at"`
+	UserID  int        `json:"user_id" example:"1"`
+	BookID  int        `json:"book_id" example:"1"`
+	Version int        `json:"version" example:"3"`
+	Read    bool       `json:"read" example:"true"`
+	Rating  *int       `json:"rating" example:"5"`
+	Review  *string    `json:"review" example:"Одна из лучших книг, что я читал."`
+	AddedAt time.Time  `json:"added_at" example:"2026-01-10T09:00:00Z"`
+	ReadAt  *time.Time `json:"read_at" example:"2026-01-15T12:00:00Z"`
 }
 
 func shelfBookDTOFromDomain(shelf core_domain.ShelfBook) ShelfBookDTOResponse {
@@ -52,13 +52,13 @@ func booksFBSDTOFromDomain(b []core_domain.ShelfBookWithBook) []ShelfBookWithBoo
 }
 
 type EventDTO struct {
-	Name   string    `json:"name"`
-	BookID int       `json:"book_id"`
-	Title  string    `json:"title"`
-	Author string    `json:"author"`
-	Rating *int      `json:"rating"`
-	Review *string   `json:"review"`
-	At     time.Time `json:"at"`
+	Name   string    `json:"name" example:"finished"`
+	BookID int       `json:"book_id" example:"1"`
+	Title  string    `json:"title" example:"Хоббит, или Туда и обратно"`
+	Author string    `json:"author" example:"Дж. Р. Р. Толкин"`
+	Rating *int      `json:"rating" example:"5"`
+	Review *string   `json:"review" example:"Одна из лучших книг, что я читал."`
+	At     time.Time `json:"at" example:"2026-01-15T12:00:00Z"`
 }
 
 func eventDTOFromDomain(d core_domain.Event) EventDTO {
