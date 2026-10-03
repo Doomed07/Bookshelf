@@ -94,6 +94,14 @@ app-deploy:
 
 app-undeploy:
 	@docker compose down bookshelfapp
+
+swagger-gen:
+	@docker compose run --rm swagger \
+		init \
+		-g cmd/bookshelfapp/main.go \
+		-o docs \
+		--parseInternal \
+		--parseDependency
 	
 ps:
 	@docker compose ps

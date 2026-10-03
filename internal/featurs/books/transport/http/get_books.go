@@ -10,6 +10,19 @@ import (
 
 type GetBooksResponse []BookDTOResponse
 
+// GetBooks     godoc
+// @Summary     List books
+// @Description Get a paginated list of books, optionally filtered by title/author
+// @Tags        books
+// @Produce     json
+// @Param       title  query string false "Filter by title"
+// @Param       author query string false "Filter by author"
+// @Param       limit  query int    false "Limit"
+// @Param       offset query int    false "Offset"
+// @Success     200 {object} GetBooksResponse "Books found"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /books [get]
 func (h *BooksHTTPHandler) GetBooks(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

@@ -26,8 +26,15 @@ import (
 	users_service "github.com/Doomed07/Bookshelf/internal/featurs/users/service"
 	users_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/users/transport/http"
 	"go.uber.org/zap"
+
+	_ "github.com/Doomed07/Bookshelf/docs"
 )
 
+// @title 			Bookshelf API
+// @version			1.0
+// @description 		Bookshelf Application REST-API schema
+// @host 			127.0.0.1:8080
+// @BasePath 		/api/v1
 func main() {
 	cfg := core_config.NewConfigMust()
 	time.Local = cfg.TimeZone
@@ -83,6 +90,7 @@ func main() {
 	httpServer := core_http_server.NewHTTPServer(
 		core_http_server.NewConfigMust(),
 		logger,
+		core_http_middleware.CORS(),
 		core_http_middleware.RequestID(),
 		core_http_middleware.Logger(logger),
 		core_http_middleware.Trace(),
@@ -96,6 +104,8 @@ func main() {
 	apiVersionRouterV1.RegisterRoutes(statsTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouterV1)
+
+	httpServer.RegisterSwagger()
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("Failed to run server", zap.Error(err))

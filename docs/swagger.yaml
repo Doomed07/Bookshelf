@@ -1,0 +1,944 @@
+basePath: /api/v1
+definitions:
+  github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse:
+    properties:
+      error:
+        example: invalid argument
+        type: string
+      message:
+        example: the provided argument is invalid
+        type: string
+    type: object
+  github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse:
+    properties:
+      author:
+        example: Дж. Р. Р. Толкин
+        type: string
+      description:
+        example: Повесть о путешествии хоббита Бильбо Бэггинса, втянутого в опасное
+          приключение с гномами и драконом.
+        type: string
+      genres:
+        example:
+        - Фэнтези
+        - Приключения
+        items:
+          type: string
+        type: array
+      id:
+        example: 1
+        type: integer
+      pages:
+        example: 310
+        type: integer
+      reads_count:
+        example: 42
+        type: integer
+      score:
+        example: 5
+        type: integer
+      title:
+        example: Хоббит, или Туда и обратно
+        type: string
+      year:
+        example: 1937
+        type: integer
+    type: object
+  internal_featurs_books_transport_http.BookDTOResponse:
+    properties:
+      author:
+        example: Дж. Р. Р. Толкин
+        type: string
+      description:
+        example: Повесть о путешествии хоббита Бильбо Бэггинса, втянутого в опасное
+          приключение с гномами и драконом.
+        type: string
+      genres:
+        example:
+        - Фэнтези
+        - Приключения
+        items:
+          type: string
+        type: array
+      id:
+        example: 1
+        type: integer
+      pages:
+        example: 310
+        type: integer
+      reads_count:
+        example: 42
+        type: integer
+      score:
+        example: 5
+        type: integer
+      title:
+        example: Хоббит, или Туда и обратно
+        type: string
+      year:
+        example: 1937
+        type: integer
+    type: object
+  internal_featurs_books_transport_http.GetBookResponse:
+    properties:
+      author:
+        example: Дж. Р. Р. Толкин
+        type: string
+      description:
+        example: Повесть о путешествии хоббита Бильбо Бэггинса, втянутого в опасное
+          приключение с гномами и драконом.
+        type: string
+      genres:
+        example:
+        - Фэнтези
+        - Приключения
+        items:
+          type: string
+        type: array
+      id:
+        example: 1
+        type: integer
+      pages:
+        example: 310
+        type: integer
+      reads_count:
+        example: 42
+        type: integer
+      score:
+        example: 5
+        type: integer
+      title:
+        example: Хоббит, или Туда и обратно
+        type: string
+      year:
+        example: 1937
+        type: integer
+    type: object
+  internal_featurs_books_transport_http.ReviewDTOResponse:
+    properties:
+      rating:
+        example: 5
+        type: integer
+      read_at:
+        example: "2026-01-15T12:00:00Z"
+        type: string
+      review:
+        example: Одна из лучших книг, что я читал.
+        type: string
+      user_id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+    type: object
+  internal_featurs_bookshelf_transport_http.AddBookRequest:
+    properties:
+      book_id:
+        example: 1
+        minimum: 1
+        type: integer
+    required:
+    - book_id
+    type: object
+  internal_featurs_bookshelf_transport_http.AddBookResponse:
+    properties:
+      book:
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+      shelf:
+        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+    type: object
+  internal_featurs_bookshelf_transport_http.EventDTO:
+    properties:
+      at:
+        example: "2026-01-15T12:00:00Z"
+        type: string
+      author:
+        example: Дж. Р. Р. Толкин
+        type: string
+      book_id:
+        example: 1
+        type: integer
+      name:
+        example: finished
+        type: string
+      rating:
+        example: 5
+        type: integer
+      review:
+        example: Одна из лучших книг, что я читал.
+        type: string
+      title:
+        example: Хоббит, или Туда и обратно
+        type: string
+    type: object
+  internal_featurs_bookshelf_transport_http.GetBookResponse:
+    properties:
+      book:
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+      shelf:
+        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+    type: object
+  internal_featurs_bookshelf_transport_http.PatchBookResponse:
+    properties:
+      book:
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+      shelf:
+        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+    type: object
+  internal_featurs_bookshelf_transport_http.PatchShelfBookRequest:
+    properties:
+      rating:
+        example: 80
+        type: integer
+      read:
+        example: true
+        type: boolean
+      review:
+        example: Одна из лучших книг, что я читал.
+        type: string
+    type: object
+  internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse:
+    properties:
+      added_at:
+        example: "2026-01-10T09:00:00Z"
+        type: string
+      book_id:
+        example: 1
+        type: integer
+      rating:
+        example: 5
+        type: integer
+      read:
+        example: true
+        type: boolean
+      read_at:
+        example: "2026-01-15T12:00:00Z"
+        type: string
+      review:
+        example: Одна из лучших книг, что я читал.
+        type: string
+      user_id:
+        example: 1
+        type: integer
+      version:
+        example: 3
+        type: integer
+    type: object
+  internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse:
+    properties:
+      book:
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+      shelf:
+        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+    type: object
+  internal_featurs_statistics_transport_http.BookDTOResponse:
+    properties:
+      author:
+        example: Дж. Р. Р. Толкин
+        type: string
+      description:
+        example: Повесть о путешествии хоббита Бильбо Бэггинса, втянутого в опасное
+          приключение с гномами и драконом.
+        type: string
+      genres:
+        example:
+        - Фэнтези
+        - Приключения
+        items:
+          type: string
+        type: array
+      id:
+        example: 1
+        type: integer
+      pages:
+        example: 310
+        type: integer
+      reads_count:
+        example: 42
+        type: integer
+      score:
+        example: 5
+        type: integer
+      title:
+        example: Хоббит, или Туда и обратно
+        type: string
+      year:
+        example: 1937
+        type: integer
+    type: object
+  internal_featurs_statistics_transport_http.GetStatsResponse:
+    properties:
+      books_count:
+        example: 1022
+        type: integer
+      books_on_shelves:
+        example: 3450
+        type: integer
+      reads_count:
+        example: 2130
+        type: integer
+      top_by_reads:
+        items:
+          $ref: '#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse'
+        type: array
+      top_by_score:
+        items:
+          $ref: '#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse'
+        type: array
+      users_count:
+        example: 128
+        type: integer
+    type: object
+  internal_featurs_users_transport_http.CreateUserRequest:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      username:
+        example: book_worm07
+        type: string
+    type: object
+  internal_featurs_users_transport_http.CreateUserResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+      version:
+        example: 3
+        type: integer
+    type: object
+  internal_featurs_users_transport_http.GetUserResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+      version:
+        example: 3
+        type: integer
+    type: object
+  internal_featurs_users_transport_http.PatchUserRequest:
+    properties:
+      email:
+        example: Max@mail.com
+        type: string
+      username:
+        example: booklover
+        type: string
+    type: object
+  internal_featurs_users_transport_http.PatchedUserResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+      version:
+        example: 3
+        type: integer
+    type: object
+  internal_featurs_users_transport_http.UserDTOResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+      version:
+        example: 3
+        type: integer
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact: {}
+  description: Bookshelf Application REST-API schema
+  title: Bookshelf API
+  version: "1.0"
+paths:
+  /books:
+    get:
+      description: Get a paginated list of books, optionally filtered by title/author
+      parameters:
+      - description: Filter by title
+        in: query
+        name: title
+        type: string
+      - description: Filter by author
+        in: query
+        name: author
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Books found
+          schema:
+            items:
+              $ref: '#/definitions/internal_featurs_books_transport_http.BookDTOResponse'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: List books
+      tags:
+      - books
+  /books/{id}:
+    get:
+      description: Get book by ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book found
+          schema:
+            $ref: '#/definitions/internal_featurs_books_transport_http.GetBookResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Get book
+      tags:
+      - books
+  /books/{id}/reviews:
+    get:
+      description: Get a paginated list of reviews for a book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews found
+          schema:
+            items:
+              $ref: '#/definitions/internal_featurs_books_transport_http.ReviewDTOResponse'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: List book reviews
+      tags:
+      - books
+  /stats:
+    get:
+      description: Get system-wide statistics by default; pass user_id for per-user
+        statistics or book_id for per-book statistics (mutually exclusive, response
+        shape returned is GetStatsResponse/GetUserStatsResponse/GetBookStatsResponse
+        respectively)
+      parameters:
+      - description: Get statistics for this user instead of system-wide (mutually
+          exclusive with book_id)
+        in: query
+        name: user_id
+        type: integer
+      - description: Get statistics for this book instead of system-wide (mutually
+          exclusive with user_id)
+        in: query
+        name: book_id
+        type: integer
+      - description: Number of top books to return (system statistics only)
+        in: query
+        name: top
+        type: integer
+      - description: Filter from date, format YYYY-MM-DD
+        in: query
+        name: from
+        type: string
+      - description: Filter to date, format YYYY-MM-DD
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System statistics
+          schema:
+            $ref: '#/definitions/internal_featurs_statistics_transport_http.GetStatsResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User or book not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Get statistics
+      tags:
+      - statistics
+  /users:
+    get:
+      description: Get a paginated list of users
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users found
+          schema:
+            items:
+              $ref: '#/definitions/internal_featurs_users_transport_http.UserDTOResponse'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: List users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create new user in the app
+      parameters:
+      - description: CreateUser request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_featurs_users_transport_http.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successed to create user
+          schema:
+            $ref: '#/definitions/internal_featurs_users_transport_http.CreateUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Create user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Delete user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Successed to delete user
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Delete user
+      tags:
+      - users
+    get:
+      description: Get user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User found
+          schema:
+            $ref: '#/definitions/internal_featurs_users_transport_http.GetUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Get user
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Partially update user fields
+        ###Logic of updating fields:
+        1. **If a field is provided in the request**: it will be updated with the new value.
+        2. **If a field is not provided in the request**: it will remain unchanged.
+        3. **If a field is provided with a null value**: it will result in a 400 error.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: PatchUser request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_featurs_users_transport_http.PatchUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successed to patch user
+          schema:
+            $ref: '#/definitions/internal_featurs_users_transport_http.PatchedUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Patch user
+      tags:
+      - users
+  /users/{user_id}/activity:
+    get:
+      description: Get a paginated list of the user's bookshelf activity events
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Activity events found
+          schema:
+            items:
+              $ref: '#/definitions/internal_featurs_bookshelf_transport_http.EventDTO'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Get user activity feed
+      tags:
+      - bookshelf
+  /users/{user_id}/bookshelf:
+    get:
+      description: Get a paginated list of books on the user's bookshelf, optionally
+        filtered by read status
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Filter by read status
+        in: query
+        name: read
+        type: boolean
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Books found
+          schema:
+            items:
+              $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: List bookshelf books
+      tags:
+      - bookshelf
+    post:
+      consumes:
+      - application/json
+      description: Add a book to the user's bookshelf
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: AddBook request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_featurs_bookshelf_transport_http.AddBookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successed to add book to bookshelf
+          schema:
+            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.AddBookResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: User or book not found
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Add book to bookshelf
+      tags:
+      - bookshelf
+  /users/{user_id}/bookshelf/{book_id}:
+    delete:
+      description: Remove a book from the user's bookshelf
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Successed to remove book from bookshelf
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: Book not found on bookshelf
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Remove book from bookshelf
+      tags:
+      - bookshelf
+    get:
+      description: Get a book from the user's bookshelf
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book found
+          schema:
+            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.GetBookResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: Book not found on bookshelf
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Get book from bookshelf
+      tags:
+      - bookshelf
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Partially update a book on the user's bookshelf (read status, rating, review)
+        ###Logic of updating fields:
+        1. **If a field is provided in the request**: it will be updated with the new value.
+        2. **If a field is not provided in the request**: it will remain unchanged.
+        3. **If `read` is provided with a null value**: it will result in a 400 error.
+        4. **If `rating` or `review` is provided with a null value**: the field will be cleared.
+        5. **`rating`/`review` can only be set when the book is read** (`read=true`), otherwise a 409 error is returned.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: integer
+      - description: PatchBook request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_featurs_bookshelf_transport_http.PatchShelfBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successed to patch book
+          schema:
+            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.PatchBookResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "404":
+          description: Book not found on bookshelf
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Patch bookshelf book
+      tags:
+      - bookshelf
+swagger: "2.0"

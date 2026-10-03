@@ -10,6 +10,17 @@ import (
 
 type GetBookResponse BookDTOResponse
 
+// GetBook      godoc
+// @Summary     Get book
+// @Description Get book by ID
+// @Tags        books
+// @Produce     json
+// @Param       id path int true "Book ID"
+// @Success     200 {object} GetBookResponse "Book found"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "Book not found"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /books/{id} [get]
 func (h *BooksHTTPHandler) GetBook(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

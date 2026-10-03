@@ -10,6 +10,18 @@ import (
 
 type GetBookResponse ShelfBookWithBookDTOResponse
 
+// GetBook      godoc
+// @Summary     Get book from bookshelf
+// @Description Get a book from the user's bookshelf
+// @Tags        bookshelf
+// @Produce     json
+// @Param       user_id path int true "User ID"
+// @Param       book_id path int true "Book ID"
+// @Success     200 {object} GetBookResponse "Book found"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "Book not found on bookshelf"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /users/{user_id}/bookshelf/{book_id} [get]
 func (h *BookshelfHTTPHandler) GetBook(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

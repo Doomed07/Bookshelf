@@ -9,11 +9,24 @@ import (
 )
 
 type AddBookRequest struct {
-	BookID int `json:"book_id" validate:"required,min=1"`
+	BookID int `json:"book_id" validate:"required,min=1" example:"1"`
 }
 
 type AddBookResponse ShelfBookWithBookDTOResponse
 
+// AddBook      godoc
+// @Summary     Add book to bookshelf
+// @Description Add a book to the user's bookshelf
+// @Tags        bookshelf
+// @Accept      json
+// @Produce     json
+// @Param       user_id path int            true "User ID"
+// @Param       request body AddBookRequest true "AddBook request body"
+// @Success     201 {object} AddBookResponse "Successed to add book to bookshelf"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "User or book not found"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /users/{user_id}/bookshelf [post]
 func (h *BookshelfHTTPHandler) AddBook(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

@@ -11,8 +11,8 @@ import (
 )
 
 type PatchUserRequest struct {
-	Username core_http_types.Nullable[string] `json:"username"`
-	Email    core_http_types.Nullable[string] `json:"email"`
+	Username core_http_types.Nullable[string] `json:"username" swaggertype:"string" example:"booklover"`
+	Email    core_http_types.Nullable[string] `json:"email" swaggertype:"string" example:"Max@mail.com"`
 }
 
 func userPatchFromRequest(request PatchUserRequest) core_domain.UserPatch {
@@ -24,6 +24,23 @@ func userPatchFromRequest(request PatchUserRequest) core_domain.UserPatch {
 
 type PatchedUserResponse UserDTOResponse
 
+// PatchUser    godoc
+// @Summary     Patch user
+// @Description Partially update user fields
+// @Description ###Logic of updating fields:
+// @Description 1. **If a field is provided in the request**: it will be updated with the new value.
+// @Description 2. **If a field is not provided in the request**: it will remain unchanged.
+// @Description 3. **If a field is provided with a null value**: it will result in a 400 error.
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Param       id      path int              true "User ID"
+// @Param       request body PatchUserRequest true "PatchUser request body"
+// @Success     200 {object} PatchedUserResponse "Successed to patch user"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "User not found"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /users/{id} [patch]
 func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)

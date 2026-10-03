@@ -1,12 +1,12 @@
 package users_transport_http
 
-import "github.com/Doomed07/Bookshelf/internal/core/domain"
+import core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
 
 type UserDTOResponse struct {
-	ID       int    `json:"id"`
-	Version  int    `json:"version"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID       int    `json:"id" example:"1"`
+	Version  int    `json:"version" example:"3"`
+	Username string `json:"username" example:"book_worm07"`
+	Email    string `json:"email" example:"lol@mail.com"`
 }
 
 func userDTOFromDomain(user core_domain.User) UserDTOResponse {

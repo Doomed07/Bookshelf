@@ -7,15 +7,15 @@ import (
 )
 
 type BookDTOResponse struct {
-	ID          int      `json:"id"`
-	Title       string   `json:"title"`
-	Author      string   `json:"author"`
-	Year        int      `json:"year"`
-	Pages       int      `json:"pages"`
-	Genres      []string `json:"genres"`
-	Description string   `json:"description"`
-	Score       *int     `json:"score"`
-	ReadsCount  int      `json:"reads_count"`
+	ID          int      `json:"id" example:"1"`
+	Title       string   `json:"title" example:"Хоббит, или Туда и обратно"`
+	Author      string   `json:"author" example:"Дж. Р. Р. Толкин"`
+	Year        int      `json:"year" example:"1937"`
+	Pages       int      `json:"pages" example:"310"`
+	Genres      []string `json:"genres" example:"Фэнтези,Приключения"`
+	Description string   `json:"description" example:"Повесть о путешествии хоббита Бильбо Бэггинса, втянутого в опасное приключение с гномами и драконом."`
+	Score       *int     `json:"score" example:"5"`
+	ReadsCount  int      `json:"reads_count" example:"42"`
 }
 
 func BookDTOFromDomain(book core_domain.Book) BookDTOResponse {
@@ -43,11 +43,11 @@ func booksDTOFromDomains(books []core_domain.Book) []BookDTOResponse {
 }
 
 type ReviewDTOResponse struct {
-	UserID   int       `json:"user_id"`
-	Username string    `json:"username"`
-	Rating   *int      `json:"rating"`
-	Review   *string   `json:"review"`
-	ReadAt   time.Time `json:"read_at"`
+	UserID   int       `json:"user_id" example:"1"`
+	Username string    `json:"username" example:"book_worm07"`
+	Rating   *int      `json:"rating" example:"5"`
+	Review   *string   `json:"review" example:"Одна из лучших книг, что я читал."`
+	ReadAt   time.Time `json:"read_at" example:"2026-01-15T12:00:00Z"`
 }
 
 func reviewDTOFromDomain(review core_domain.Review) ReviewDTOResponse {

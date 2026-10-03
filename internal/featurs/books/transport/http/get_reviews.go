@@ -10,6 +10,19 @@ import (
 
 type GetReviewResponse []ReviewDTOResponse
 
+// GetReviews   godoc
+// @Summary     List book reviews
+// @Description Get a paginated list of reviews for a book
+// @Tags        books
+// @Produce     json
+// @Param       id     path  int true  "Book ID"
+// @Param       limit  query int false "Limit"
+// @Param       offset query int false "Offset"
+// @Success     200 {object} GetReviewResponse "Reviews found"
+// @Failure     400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure     404 {object} core_http_response.ErrorResponse "Book not found"
+// @Failure     500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router      /books/{id}/reviews [get]
 func (h *BooksHTTPHandler) GetReviews(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromCtx(ctx)
