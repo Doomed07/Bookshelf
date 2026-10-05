@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация · Shelfmate</title>
+  <meta name="description" content="Отмечайте прочитанные книги, ставьте оценки от 1 до 100, пишите рецензии и следите за своей читательской статистикой.">
+  <meta name="theme-color" content="#14181c">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@700&amp;display=swap">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script type="module" src="/static/js/pages/signup.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <div id="site-header"></div>
+  <main class="site-main" id="main">
+    <div id="app">
+      <div class="container page page--narrow">
+        <header class="page-header">
+          <h1 class="page-title">Регистрация</h1>
+          <p class="page-subtitle">Заведите читательский профиль — достаточно имени и email.</p>
+        </header>
+        <p class="alert" role="alert" id="signup-alert" hidden></p>
+        <form class="form" id="signup-form" action="/signup" method="post" novalidate>
+          <div class="form__field">
+            <label class="form__label" for="signup-username">Имя пользователя</label>
+            <input class="form__input" id="signup-username" name="username" type="text" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" autocomplete="username" autocapitalize="none" spellcheck="false" aria-describedby="signup-username-hint">
+            <p class="form__hint" id="signup-username-hint">От 3 до 30 символов: латинские буквы, цифры и _.</p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="signup-email">Email</label>
+            <input class="form__input" id="signup-email" name="email" type="email" required maxlength="254" autocomplete="email" aria-describedby="signup-email-hint">
+            <p class="form__hint" id="signup-email-hint" hidden></p>
+          </div>
+          <button class="button button--cta" type="submit">Создать профиль</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

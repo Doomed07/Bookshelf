@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shelfmate — социальная сеть для тех, кто любит читать</title>
+  <meta name="description" content="Отмечайте прочитанные книги, ставьте оценки от 1 до 100, пишите рецензии и следите за своей читательской статистикой.">
+  <meta name="theme-color" content="#14181c">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@700&amp;display=swap">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script type="module" src="/static/js/pages/home.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <div class="backdrop" aria-hidden="true"></div>
+  <div id="site-header"></div>
+  <main class="site-main" id="main">
+    <div id="app">
+      <section class="hero">
+        <div class="container">
+          <h1 class="hero__title">
+            <span class="hero__line">Отмечайте прочитанные книги.</span>
+            <span class="hero__line">Откладывайте те, что хотите прочесть.</span>
+            <span class="hero__line">Советуйте друзьям лучшее.</span>
+          </h1>
+          <a class="button button--cta hero__cta" href="/signup">Начать — это бесплатно!</a>
+          <p class="hero__note">Социальная сеть для тех, кто любит читать.</p>
+        </div>
+      </section>
+
+      <div class="container">
+        <section class="section section--first" aria-labelledby="popular-title">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="popular-title">Популярное у читателей</h2>
+            <a class="section-heading__aside" href="/books">Все книги</a>
+          </div>
+          <div id="popular"><p class="loading" role="status">Загрузка…</p></div>
+        </section>
+
+        <section class="section" aria-labelledby="features-title">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="features-title">Shelfmate позволяет…</h2>
+          </div>
+          <ul class="feature-grid">
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7.5c-1.6-1.5-4-2.3-8-2.3v13c4 0 6.4.8 8 2.3 1.6-1.5 4-2.3 8-2.3v-13c-4 0-6.4.8-8 2.3Z"/><path d="M12 7.5v13"/></svg>
+              <p>Собирать на полке все прочитанные книги — начните хоть с сегодняшнего дня</p>
+            </li>
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z"/></svg>
+              <p>Откладывать книги в «хочу прочитать», чтобы не потерять ни одной</p>
+            </li>
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17a8 8 0 1 1 16 0"/><path d="m12 17 3.5-5.5"/><circle cx="12" cy="17" r="1.2"/></svg>
+              <p>Оценивать книги по шкале от 1 до 100 — точнее, чем звёздочки</p>
+            </li>
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m14.5 7.5 2 2"/></svg>
+              <p>Писать рецензии до 5000 символов и читать отзывы других читателей</p>
+            </li>
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg>
+              <p>Следить за лентой активности: что добавлено на полку и что дочитано</p>
+            </li>
+            <li class="feature">
+              <svg class="feature__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 20v-6"/><path d="M12 20V6"/><path d="M17 20v-9"/></svg>
+              <p>Смотреть личную статистику: любимые жанр и автор, время на одну книгу</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="section" aria-labelledby="top-title">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="top-title">Лучшие по оценкам…</h2>
+            <span class="section-heading__aside" id="top-counter"></span>
+          </div>
+          <div id="top-rated"><p class="loading" role="status">Загрузка…</p></div>
+        </section>
+
+        <div class="mid-title">
+          <h2 class="mid-title__heading">Пишите рецензии. Ставьте оценки. Делитесь своей читательской жизнью.</h2>
+          <p class="mid-title__text">Ниже — свежие рецензии читателей Shelfmate. <a href="/signup">Зарегистрируйтесь</a>, чтобы писать свои.</p>
+        </div>
+
+        <section class="section" aria-labelledby="reviews-title">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="reviews-title">Свежие рецензии</h2>
+          </div>
+          <div id="reviews"><p class="loading" role="status">Загрузка…</p></div>
+        </section>
+
+        <section class="stats-band" aria-labelledby="stats-title">
+          <h2 class="visually-hidden" id="stats-title">Shelfmate в цифрах</h2>
+          <dl class="stats-band__list" id="stats-band"></dl>
+          <p class="stats-band__more"><a href="/stats">Вся статистика →</a></p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

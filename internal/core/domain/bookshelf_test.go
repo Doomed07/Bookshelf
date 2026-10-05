@@ -104,9 +104,10 @@ func TestShelfBookPatch_Validate(t *testing.T) {
 func TestShelfBook_ApplyPatch(t *testing.T) {
 	addedAt := time.Date(2026, 1, 10, 9, 0, 0, 0, time.UTC)
 	readAt := time.Date(2026, 1, 15, 12, 0, 0, 0, time.UTC)
+	reviewedAt := time.Date(2026, 1, 20, 18, 30, 0, 0, time.UTC)
 
 	// функции, а не переменные: в ShelfBook есть указатели (Rating, Review,
-	// ReadAt), и простая копия структуры делила бы их между кейсами
+	// ReadAt, ReviewedAt), и простая копия структуры делила бы их между кейсами
 	unreadBook := func() ShelfBook {
 		return ShelfBook{UserID: 1, BookID: 1, Version: 1, AddedAt: addedAt}
 	}
@@ -116,6 +117,18 @@ func TestShelfBook_ApplyPatch(t *testing.T) {
 			Read:    true,
 			Rating:  new(70),
 			Review:  new("Хорошо"),
+			AddedAt: addedAt,
+			ReadAt:  new(readAt),
+			// рецензия есть — значит, дата её публикации обязана быть (как в CHECK таблицы)
+			ReviewedAt: new(reviewedAt),
+		}
+	}
+	// прочитана и оценена, но без рецензии: ReviewedAt пуст
+	ratedBook := func() ShelfBook {
+		return ShelfBook{
+			UserID: 1, BookID: 1, Version: 1,
+			Read:    true,
+			Rating:  new(70),
 			AddedAt: addedAt,
 			ReadAt:  new(readAt),
 		}
@@ -149,7 +162,7 @@ func TestShelfBook_ApplyPatch(t *testing.T) {
 			},
 		},
 		{
-			name: "mark read book as unread clears rating, review and readAt",
+			name: "mark read book as unread clears rating, review, readAt and reviewedAt",
 			base: readBook,
 			patch: NewShelfBookPatch(
 				Nullable[bool]{Set: true, Value: new(false)},
@@ -157,8 +170,8 @@ func TestShelfBook_ApplyPatch(t *testing.T) {
 				Nullable[string]{},
 			),
 			checkBook: func(t *testing.T, got ShelfBook) {
-				if got.Read || got.Rating != nil || got.Review != nil || got.ReadAt != nil {
-					t.Errorf("got %+v, want unread book without rating/review/readAt", got)
+				if got.Read || got.Rating != nil || got.Review != nil || got.ReadAt != nil || got.ReviewedAt != nil {
+					t.Errorf("got %+v, want unread book without rating/review/readAt/reviewedAt", got)
 				}
 			},
 		},
@@ -205,8 +218,103 @@ func TestShelfBook_ApplyPatch(t *testing.T) {
 				if got.Rating != nil || got.Review != nil {
 					t.Errorf("Rating = %v, Review = %v, want both nil", got.Rating, got.Review)
 				}
+				if got.ReviewedAt != nil {
+					t.Errorf("ReviewedAt = %v, want nil", got.ReviewedAt)
+				}
 				if !got.Read {
 					t.Error("Read = false, want true")
+				}
+			},
+		},
+		{
+			name: "review published for the first time sets reviewedAt",
+			base: ratedBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{},
+				Nullable[int]{},
+				Nullable[string]{Set: true, Value: new("Рецензия")},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.ReviewedAt == nil {
+					t.Fatal("ReviewedAt = nil, want time")
+				}
+				if got.ReviewedAt.Before(readAt) {
+					t.Errorf("ReviewedAt = %v is before ReadAt = %v", got.ReviewedAt, readAt)
+				}
+			},
+		},
+		{
+			// правка уже опубликованной рецензии не должна «поднимать» её как новую
+			name: "review edit keeps reviewedAt",
+			base: readBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{},
+				Nullable[int]{},
+				Nullable[string]{Set: true, Value: new("Исправленный текст")},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.ReviewedAt == nil || !got.ReviewedAt.Equal(reviewedAt) {
+					t.Errorf("ReviewedAt = %v, want %v", got.ReviewedAt, reviewedAt)
+				}
+			},
+		},
+		{
+			name: "rating change keeps reviewedAt of existing review",
+			base: readBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{},
+				Nullable[int]{Set: true, Value: new(90)},
+				Nullable[string]{},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.ReviewedAt == nil || !got.ReviewedAt.Equal(reviewedAt) {
+					t.Errorf("ReviewedAt = %v, want %v", got.ReviewedAt, reviewedAt)
+				}
+			},
+		},
+		{
+			name: "review removed clears reviewedAt",
+			base: readBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{},
+				Nullable[int]{},
+				Nullable[string]{Set: true, Value: nil},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.Review != nil || got.ReviewedAt != nil {
+					t.Errorf("Review = %v, ReviewedAt = %v, want both nil", got.Review, got.ReviewedAt)
+				}
+			},
+		},
+		{
+			name: "rating only does not set reviewedAt",
+			base: ratedBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{},
+				Nullable[int]{Set: true, Value: new(90)},
+				Nullable[string]{},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.ReviewedAt != nil {
+					t.Errorf("ReviewedAt = %v, want nil", got.ReviewedAt)
+				}
+			},
+		},
+		{
+			name: "mark read and review in one patch sets readAt and reviewedAt",
+			base: unreadBook,
+			patch: NewShelfBookPatch(
+				Nullable[bool]{Set: true, Value: new(true)},
+				Nullable[int]{},
+				Nullable[string]{Set: true, Value: new("Рецензия")},
+			),
+			checkBook: func(t *testing.T, got ShelfBook) {
+				if got.ReadAt == nil || got.ReviewedAt == nil {
+					t.Fatalf("ReadAt = %v, ReviewedAt = %v, want both set", got.ReadAt, got.ReviewedAt)
+				}
+				// CHECK таблицы требует reviewed_at >= read_at
+				if got.ReviewedAt.Before(*got.ReadAt) {
+					t.Errorf("ReviewedAt = %v is before ReadAt = %v", got.ReviewedAt, got.ReadAt)
 				}
 			},
 		},
@@ -279,7 +387,8 @@ func TestShelfBook_ApplyPatch(t *testing.T) {
 				if book.Read != before.Read ||
 					!equalPtr(book.Rating, before.Rating) ||
 					!equalPtr(book.Review, before.Review) ||
-					!equalPtr(book.ReadAt, before.ReadAt) {
+					!equalPtr(book.ReadAt, before.ReadAt) ||
+					!equalPtr(book.ReviewedAt, before.ReviewedAt) {
 					t.Errorf("ApplyPatch() mutated book on error: got %+v, want %+v", book, before)
 				}
 				return

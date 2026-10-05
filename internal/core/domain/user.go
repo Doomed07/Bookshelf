@@ -60,6 +60,14 @@ func normalizeEmail(email string) string {
 }
 
 func (u *User) Validate() error {
+	if err := u.ValidateUsername(); err != nil {
+		return err
+	}
+
+	return u.ValidateEmail()
+}
+
+func (u *User) ValidateUsername() error {
 	usernameLen := utf8.RuneCountInString(u.Username)
 	if usernameLen < 3 || usernameLen > 30 {
 		return fmt.Errorf(
@@ -72,6 +80,10 @@ func (u *User) Validate() error {
 			core_errors.ErrInvalidArgument)
 	}
 
+	return nil
+}
+
+func (u *User) ValidateEmail() error {
 	emailLen := utf8.RuneCountInString(u.Email)
 	if emailLen > 254 {
 		return fmt.Errorf(

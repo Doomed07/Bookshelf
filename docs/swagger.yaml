@@ -9,7 +9,7 @@ definitions:
         example: the provided argument is invalid
         type: string
     type: object
-  github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse:
+  github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse:
     properties:
       author:
         example: Дж. Р. Р. Толкин
@@ -44,7 +44,7 @@ definitions:
         example: 1937
         type: integer
     type: object
-  internal_featurs_books_transport_http.BookDTOResponse:
+  internal_features_books_transport_http.BookDTOResponse:
     properties:
       author:
         example: Дж. Р. Р. Толкин
@@ -79,7 +79,7 @@ definitions:
         example: 1937
         type: integer
     type: object
-  internal_featurs_books_transport_http.GetBookResponse:
+  internal_features_books_transport_http.GetBookResponse:
     properties:
       author:
         example: Дж. Р. Р. Толкин
@@ -114,7 +114,14 @@ definitions:
         example: 1937
         type: integer
     type: object
-  internal_featurs_books_transport_http.ReviewDTOResponse:
+  internal_features_books_transport_http.RecentReviewDTOResponse:
+    properties:
+      book:
+        $ref: '#/definitions/internal_features_books_transport_http.BookDTOResponse'
+      review:
+        $ref: '#/definitions/internal_features_books_transport_http.ReviewDTOResponse'
+    type: object
+  internal_features_books_transport_http.ReviewDTOResponse:
     properties:
       rating:
         example: 5
@@ -125,6 +132,9 @@ definitions:
       review:
         example: Одна из лучших книг, что я читал.
         type: string
+      reviewed_at:
+        example: "2026-01-20T18:30:00Z"
+        type: string
       user_id:
         example: 1
         type: integer
@@ -132,7 +142,7 @@ definitions:
         example: book_worm07
         type: string
     type: object
-  internal_featurs_bookshelf_transport_http.AddBookRequest:
+  internal_features_bookshelf_transport_http.AddBookRequest:
     properties:
       book_id:
         example: 1
@@ -141,14 +151,14 @@ definitions:
     required:
     - book_id
     type: object
-  internal_featurs_bookshelf_transport_http.AddBookResponse:
+  internal_features_bookshelf_transport_http.AddBookResponse:
     properties:
       book:
-        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse'
       shelf:
-        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+        $ref: '#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse'
     type: object
-  internal_featurs_bookshelf_transport_http.EventDTO:
+  internal_features_bookshelf_transport_http.EventDTO:
     properties:
       at:
         example: "2026-01-15T12:00:00Z"
@@ -172,21 +182,21 @@ definitions:
         example: Хоббит, или Туда и обратно
         type: string
     type: object
-  internal_featurs_bookshelf_transport_http.GetBookResponse:
+  internal_features_bookshelf_transport_http.GetBookResponse:
     properties:
       book:
-        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse'
       shelf:
-        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+        $ref: '#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse'
     type: object
-  internal_featurs_bookshelf_transport_http.PatchBookResponse:
+  internal_features_bookshelf_transport_http.PatchBookResponse:
     properties:
       book:
-        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse'
       shelf:
-        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+        $ref: '#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse'
     type: object
-  internal_featurs_bookshelf_transport_http.PatchShelfBookRequest:
+  internal_features_bookshelf_transport_http.PatchShelfBookRequest:
     properties:
       rating:
         example: 80
@@ -198,7 +208,7 @@ definitions:
         example: Одна из лучших книг, что я читал.
         type: string
     type: object
-  internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse:
+  internal_features_bookshelf_transport_http.ShelfBookDTOResponse:
     properties:
       added_at:
         example: "2026-01-10T09:00:00Z"
@@ -218,6 +228,9 @@ definitions:
       review:
         example: Одна из лучших книг, что я читал.
         type: string
+      reviewed_at:
+        example: "2026-01-20T18:30:00Z"
+        type: string
       user_id:
         example: 1
         type: integer
@@ -225,14 +238,14 @@ definitions:
         example: 3
         type: integer
     type: object
-  internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse:
+  internal_features_bookshelf_transport_http.ShelfBookWithBookDTOResponse:
     properties:
       book:
-        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse'
+        $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse'
       shelf:
-        $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse'
+        $ref: '#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse'
     type: object
-  internal_featurs_statistics_transport_http.BookDTOResponse:
+  internal_features_statistics_transport_http.BookDTOResponse:
     properties:
       author:
         example: Дж. Р. Р. Толкин
@@ -267,7 +280,7 @@ definitions:
         example: 1937
         type: integer
     type: object
-  internal_featurs_statistics_transport_http.GetStatsResponse:
+  internal_features_statistics_transport_http.GetStatsResponse:
     properties:
       books_count:
         example: 1022
@@ -280,17 +293,17 @@ definitions:
         type: integer
       top_by_reads:
         items:
-          $ref: '#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse'
+          $ref: '#/definitions/internal_features_statistics_transport_http.BookDTOResponse'
         type: array
       top_by_score:
         items:
-          $ref: '#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse'
+          $ref: '#/definitions/internal_features_statistics_transport_http.BookDTOResponse'
         type: array
       users_count:
         example: 128
         type: integer
     type: object
-  internal_featurs_users_transport_http.CreateUserRequest:
+  internal_features_users_transport_http.CreateUserRequest:
     properties:
       email:
         example: lol@mail.com
@@ -299,22 +312,7 @@ definitions:
         example: book_worm07
         type: string
     type: object
-  internal_featurs_users_transport_http.CreateUserResponse:
-    properties:
-      email:
-        example: lol@mail.com
-        type: string
-      id:
-        example: 1
-        type: integer
-      username:
-        example: book_worm07
-        type: string
-      version:
-        example: 3
-        type: integer
-    type: object
-  internal_featurs_users_transport_http.GetUserResponse:
+  internal_features_users_transport_http.CreateUserResponse:
     properties:
       email:
         example: lol@mail.com
@@ -329,7 +327,22 @@ definitions:
         example: 3
         type: integer
     type: object
-  internal_featurs_users_transport_http.PatchUserRequest:
+  internal_features_users_transport_http.GetUserResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+      version:
+        example: 3
+        type: integer
+    type: object
+  internal_features_users_transport_http.PatchUserRequest:
     properties:
       email:
         example: Max@mail.com
@@ -338,7 +351,7 @@ definitions:
         example: booklover
         type: string
     type: object
-  internal_featurs_users_transport_http.PatchedUserResponse:
+  internal_features_users_transport_http.PatchedUserResponse:
     properties:
       email:
         example: lol@mail.com
@@ -353,7 +366,7 @@ definitions:
         example: 3
         type: integer
     type: object
-  internal_featurs_users_transport_http.UserDTOResponse:
+  internal_features_users_transport_http.UserDTOResponse:
     properties:
       email:
         example: lol@mail.com
@@ -402,7 +415,7 @@ paths:
           description: Books found
           schema:
             items:
-              $ref: '#/definitions/internal_featurs_books_transport_http.BookDTOResponse'
+              $ref: '#/definitions/internal_features_books_transport_http.BookDTOResponse'
             type: array
         "400":
           description: Bad request
@@ -430,7 +443,7 @@ paths:
         "200":
           description: Book found
           schema:
-            $ref: '#/definitions/internal_featurs_books_transport_http.GetBookResponse'
+            $ref: '#/definitions/internal_features_books_transport_http.GetBookResponse'
         "400":
           description: Bad request
           schema:
@@ -470,7 +483,7 @@ paths:
           description: Reviews found
           schema:
             items:
-              $ref: '#/definitions/internal_featurs_books_transport_http.ReviewDTOResponse'
+              $ref: '#/definitions/internal_features_books_transport_http.ReviewDTOResponse'
             type: array
         "400":
           description: Bad request
@@ -485,6 +498,39 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
       summary: List book reviews
+      tags:
+      - books
+  /reviews:
+    get:
+      description: Get the latest written reviews of all users together with their
+        books, newest first (by read date)
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews found
+          schema:
+            items:
+              $ref: '#/definitions/internal_features_books_transport_http.RecentReviewDTOResponse'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: List recent reviews
       tags:
       - books
   /stats:
@@ -522,7 +568,7 @@ paths:
         "200":
           description: System statistics
           schema:
-            $ref: '#/definitions/internal_featurs_statistics_transport_http.GetStatsResponse'
+            $ref: '#/definitions/internal_features_statistics_transport_http.GetStatsResponse'
         "400":
           description: Bad request
           schema:
@@ -557,7 +603,7 @@ paths:
           description: Users found
           schema:
             items:
-              $ref: '#/definitions/internal_featurs_users_transport_http.UserDTOResponse'
+              $ref: '#/definitions/internal_features_users_transport_http.UserDTOResponse'
             type: array
         "400":
           description: Bad request
@@ -580,14 +626,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_featurs_users_transport_http.CreateUserRequest'
+          $ref: '#/definitions/internal_features_users_transport_http.CreateUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Successed to create user
           schema:
-            $ref: '#/definitions/internal_featurs_users_transport_http.CreateUserResponse'
+            $ref: '#/definitions/internal_features_users_transport_http.CreateUserResponse'
         "400":
           description: Bad request
           schema:
@@ -640,7 +686,7 @@ paths:
         "200":
           description: User found
           schema:
-            $ref: '#/definitions/internal_featurs_users_transport_http.GetUserResponse'
+            $ref: '#/definitions/internal_features_users_transport_http.GetUserResponse'
         "400":
           description: Bad request
           schema:
@@ -676,14 +722,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_featurs_users_transport_http.PatchUserRequest'
+          $ref: '#/definitions/internal_features_users_transport_http.PatchUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Successed to patch user
           schema:
-            $ref: '#/definitions/internal_featurs_users_transport_http.PatchedUserResponse'
+            $ref: '#/definitions/internal_features_users_transport_http.PatchedUserResponse'
         "400":
           description: Bad request
           schema:
@@ -723,7 +769,7 @@ paths:
           description: Activity events found
           schema:
             items:
-              $ref: '#/definitions/internal_featurs_bookshelf_transport_http.EventDTO'
+              $ref: '#/definitions/internal_features_bookshelf_transport_http.EventDTO'
             type: array
         "400":
           description: Bad request
@@ -769,7 +815,7 @@ paths:
           description: Books found
           schema:
             items:
-              $ref: '#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse'
+              $ref: '#/definitions/internal_features_bookshelf_transport_http.ShelfBookWithBookDTOResponse'
             type: array
         "400":
           description: Bad request
@@ -801,14 +847,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_featurs_bookshelf_transport_http.AddBookRequest'
+          $ref: '#/definitions/internal_features_bookshelf_transport_http.AddBookRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Successed to add book to bookshelf
           schema:
-            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.AddBookResponse'
+            $ref: '#/definitions/internal_features_bookshelf_transport_http.AddBookResponse'
         "400":
           description: Bad request
           schema:
@@ -875,7 +921,7 @@ paths:
         "200":
           description: Book found
           schema:
-            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.GetBookResponse'
+            $ref: '#/definitions/internal_features_bookshelf_transport_http.GetBookResponse'
         "400":
           description: Bad request
           schema:
@@ -918,14 +964,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_featurs_bookshelf_transport_http.PatchShelfBookRequest'
+          $ref: '#/definitions/internal_features_bookshelf_transport_http.PatchShelfBookRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Successed to patch book
           schema:
-            $ref: '#/definitions/internal_featurs_bookshelf_transport_http.PatchBookResponse'
+            $ref: '#/definitions/internal_features_bookshelf_transport_http.PatchBookResponse'
         "400":
           description: Bad request
           schema:
