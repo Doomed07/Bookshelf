@@ -16,6 +16,7 @@ type ShelfBook struct {
 	Review                  *string
 	AddedAt                 time.Time
 	ReadAt                  *time.Time
+	ReviewedAt              *time.Time
 }
 
 func NewShelfBook(
@@ -25,16 +26,18 @@ func NewShelfBook(
 	review *string,
 	addedAt time.Time,
 	readAt *time.Time,
+	reviewedAt *time.Time,
 ) ShelfBook {
 	return ShelfBook{
-		UserID:  userID,
-		BookID:  bookID,
-		Version: version,
-		Read:    read,
-		Rating:  rating,
-		Review:  review,
-		AddedAt: addedAt,
-		ReadAt:  readAt,
+		UserID:     userID,
+		BookID:     bookID,
+		Version:    version,
+		Read:       read,
+		Rating:     rating,
+		Review:     review,
+		AddedAt:    addedAt,
+		ReadAt:     readAt,
+		ReviewedAt: reviewedAt,
 	}
 }
 
@@ -64,6 +67,7 @@ func NewShelfBookWithBook(
 	review *string,
 	addedAt time.Time,
 	readAt *time.Time,
+	reviewedAt *time.Time,
 	id int,
 	title string,
 	author string,
@@ -76,7 +80,7 @@ func NewShelfBookWithBook(
 ) ShelfBookWithBook {
 	return ShelfBookWithBook{
 		ShelfBook: NewShelfBook(userID, bookID, version, read,
-			rating, review, addedAt, readAt),
+			rating, review, addedAt, readAt, reviewedAt),
 		Book: NewBook(id, title, author, year, pages, genres,
 			description, score, readsCount),
 	}
@@ -158,6 +162,13 @@ func (s *ShelfBook) ApplyPatch(patch ShelfBookPatch) error {
 			core_errors.ErrConflict)
 	}
 
+	switch {
+	case temp.Review == nil:
+		temp.ReviewedAt = nil
+	case s.Review == nil:
+		temp.markReviewed()
+	}
+
 	*s = temp
 
 	return nil
@@ -177,6 +188,15 @@ func (s *ShelfBook) markUnread() {
 	s.Rating = nil
 	s.Review = nil
 	s.ReadAt = nil
+	s.ReviewedAt = nil
+}
+
+func (s *ShelfBook) markReviewed() {
+	reviewedAt := time.Now().UTC()
+	if s.ReadAt != nil && reviewedAt.Before(*s.ReadAt) {
+		reviewedAt = *s.ReadAt
+	}
+	s.ReviewedAt = &reviewedAt
 }
 
 type Event struct {

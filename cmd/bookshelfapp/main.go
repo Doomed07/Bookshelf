@@ -13,18 +13,19 @@ import (
 	core_postgres_pgx "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
-	books_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/books/repository/postgres"
-	books_service "github.com/Doomed07/Bookshelf/internal/featurs/books/service"
-	books_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/books/transport/http"
-	bookshelf_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/repository/postgres"
-	bookshelf_service "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/service"
-	bookshelf_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/bookshelf/transport/http"
-	statistics_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/statistics/repository/postgres"
-	statistics_service "github.com/Doomed07/Bookshelf/internal/featurs/statistics/service"
-	statistics_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/statistics/transport/http"
-	users_repository_postgres "github.com/Doomed07/Bookshelf/internal/featurs/users/repository/postgres"
-	users_service "github.com/Doomed07/Bookshelf/internal/featurs/users/service"
-	users_transport_http "github.com/Doomed07/Bookshelf/internal/featurs/users/transport/http"
+	books_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/books/repository/postgres"
+	books_service "github.com/Doomed07/Bookshelf/internal/features/books/service"
+	books_transport_http "github.com/Doomed07/Bookshelf/internal/features/books/transport/http"
+	bookshelf_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/bookshelf/repository/postgres"
+	bookshelf_service "github.com/Doomed07/Bookshelf/internal/features/bookshelf/service"
+	bookshelf_transport_http "github.com/Doomed07/Bookshelf/internal/features/bookshelf/transport/http"
+	statistics_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/statistics/repository/postgres"
+	statistics_service "github.com/Doomed07/Bookshelf/internal/features/statistics/service"
+	statistics_transport_http "github.com/Doomed07/Bookshelf/internal/features/statistics/transport/http"
+	users_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/users/repository/postgres"
+	users_service "github.com/Doomed07/Bookshelf/internal/features/users/service"
+	users_transport_http "github.com/Doomed07/Bookshelf/internal/features/users/transport/http"
+	"github.com/Doomed07/Bookshelf/web"
 	"go.uber.org/zap"
 
 	_ "github.com/Doomed07/Bookshelf/docs"
@@ -106,6 +107,9 @@ func main() {
 	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 
 	httpServer.RegisterSwagger()
+
+	httpServer.RegisterStatic("/static/", web.Static())
+	httpServer.RegisterRoutes(web.Routes(booksService, usersService)...)
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("Failed to run server", zap.Error(err))

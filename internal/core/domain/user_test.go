@@ -2,6 +2,7 @@ package core_domain
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
@@ -282,6 +283,74 @@ func TestUser_ApplyPatch(t *testing.T) {
 			}
 			if u != tt.wantUser {
 				t.Errorf("ApplyPatch() user = %+v, want %+v", u, tt.wantUser)
+			}
+		})
+	}
+}
+
+// ValidateUsername и ValidateEmail проверяют поле независимо от другого:
+// поэтому во втором поле нарочно лежит неверное значение.
+
+func TestUser_ValidateUsername(t *testing.T) {
+	tests := []struct {
+		name     string
+		username string
+		wantErr  bool
+	}{
+		{name: "valid", username: "book_worm07", wantErr: false},
+		{name: "min length", username: "abc", wantErr: false},
+		{name: "max length", username: strings.Repeat("a", 30), wantErr: false},
+		{name: "too short", username: "ab", wantErr: true},
+		{name: "too long", username: strings.Repeat("a", 31), wantErr: true},
+		{name: "cyrillic", username: "читатель", wantErr: true},
+		{name: "space", username: "book worm", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := User{Username: tt.username, Email: "not-an-email"}
+
+			gotErr := u.ValidateUsername()
+
+			if tt.wantErr {
+				if !errors.Is(gotErr, core_errors.ErrInvalidArgument) {
+					t.Errorf("ValidateUsername() error = %v, want wrapped core_errors.ErrInvalidArgument", gotErr)
+				}
+				return
+			}
+			if gotErr != nil {
+				t.Errorf("ValidateUsername() failed: %v", gotErr)
+			}
+		})
+	}
+}
+
+func TestUser_ValidateEmail(t *testing.T) {
+	tests := []struct {
+		name    string
+		email   string
+		wantErr bool
+	}{
+		{name: "valid", email: "lol@mail.com", wantErr: false},
+		{name: "plus and subdomain", email: "first.last+tag@sub.domain.ru", wantErr: false},
+		{name: "no at sign", email: "not-an-email", wantErr: true},
+		{name: "no domain zone", email: "a@b", wantErr: true},
+		{name: "max length", email: strings.Repeat("a", 245) + "@mail.com", wantErr: false}, // 254 символа
+		{name: "too long", email: strings.Repeat("a", 246) + "@mail.com", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := User{Username: "x", Email: tt.email}
+
+			gotErr := u.ValidateEmail()
+
+			if tt.wantErr {
+				if !errors.Is(gotErr, core_errors.ErrInvalidArgument) {
+					t.Errorf("ValidateEmail() error = %v, want wrapped core_errors.ErrInvalidArgument", gotErr)
+				}
+				return
+			}
+			if gotErr != nil {
+				t.Errorf("ValidateEmail() failed: %v", gotErr)
 			}
 		})
 	}

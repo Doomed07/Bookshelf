@@ -60,12 +60,28 @@ func (s *HTTPServer) RegisterSwagger() {
 	)
 }
 
-func (s *HTTPServer) Run(ctx context.Context) error {
-	mux := core_http_middleware.ChainMiddleware(s.mux, s.middleware...)
+// RegisterRoutes регистрирует маршруты в корне сайта, вне /api: HTML-страницы.
+// Маршрут без Method совпадает с любым методом — так задаётся запасной обработчик "/".
+func (s *HTTPServer) RegisterRoutes(routes ...Route) {
+	for _, route := range routes {
+		pattern := route.Path
+		if route.Method != "" {
+			pattern = route.Method + " " + route.Path
+		}
 
+		s.mux.Handle(pattern, route.WithMiddleware())
+	}
+}
+
+// Handler — корневой mux, обёрнутый в общие middleware.
+func (s *HTTPServer) Handler() http.Handler {
+	return core_http_middleware.ChainMiddleware(s.mux, s.middleware...)
+}
+
+func (s *HTTPServer) Run(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    s.config.Addr,
-		Handler: mux,
+		Handler: s.Handler(),
 	}
 
 	ch := make(chan error, 1)

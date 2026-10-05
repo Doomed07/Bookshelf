@@ -57,7 +57,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_featurs_books_transport_http.BookDTOResponse"
+                                "$ref": "#/definitions/internal_features_books_transport_http.BookDTOResponse"
                             }
                         }
                     },
@@ -99,7 +99,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Book found",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_books_transport_http.GetBookResponse"
+                            "$ref": "#/definitions/internal_features_books_transport_http.GetBookResponse"
                         }
                     },
                     "400": {
@@ -160,7 +160,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_featurs_books_transport_http.ReviewDTOResponse"
+                                "$ref": "#/definitions/internal_features_books_transport_http.ReviewDTOResponse"
                             }
                         }
                     },
@@ -172,6 +172,55 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Book not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews": {
+            "get": {
+                "description": "Get the latest written reviews of all users together with their books, newest first (by read date)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "List recent reviews",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reviews found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_features_books_transport_http.RecentReviewDTOResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -231,7 +280,7 @@ const docTemplate = `{
                     "200": {
                         "description": "System statistics",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_statistics_transport_http.GetStatsResponse"
+                            "$ref": "#/definitions/internal_features_statistics_transport_http.GetStatsResponse"
                         }
                     },
                     "400": {
@@ -285,7 +334,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_featurs_users_transport_http.UserDTOResponse"
+                                "$ref": "#/definitions/internal_features_users_transport_http.UserDTOResponse"
                             }
                         }
                     },
@@ -322,7 +371,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_users_transport_http.CreateUserRequest"
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserRequest"
                         }
                     }
                 ],
@@ -330,7 +379,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Successed to create user",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_users_transport_http.CreateUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserResponse"
                         }
                     },
                     "400": {
@@ -371,7 +420,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User found",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_users_transport_http.GetUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.GetUserResponse"
                         }
                     },
                     "400": {
@@ -459,7 +508,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_users_transport_http.PatchUserRequest"
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchUserRequest"
                         }
                     }
                 ],
@@ -467,7 +516,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successed to patch user",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_users_transport_http.PatchedUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchedUserResponse"
                         }
                     },
                     "400": {
@@ -528,7 +577,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.EventDTO"
+                                "$ref": "#/definitions/internal_features_bookshelf_transport_http.EventDTO"
                             }
                         }
                     },
@@ -596,7 +645,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse"
+                                "$ref": "#/definitions/internal_features_bookshelf_transport_http.ShelfBookWithBookDTOResponse"
                             }
                         }
                     },
@@ -646,7 +695,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.AddBookRequest"
+                            "$ref": "#/definitions/internal_features_bookshelf_transport_http.AddBookRequest"
                         }
                     }
                 ],
@@ -654,7 +703,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Successed to add book to bookshelf",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.AddBookResponse"
+                            "$ref": "#/definitions/internal_features_bookshelf_transport_http.AddBookResponse"
                         }
                     },
                     "400": {
@@ -708,7 +757,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Book found",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.GetBookResponse"
+                            "$ref": "#/definitions/internal_features_bookshelf_transport_http.GetBookResponse"
                         }
                     },
                     "400": {
@@ -810,7 +859,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.PatchShelfBookRequest"
+                            "$ref": "#/definitions/internal_features_bookshelf_transport_http.PatchShelfBookRequest"
                         }
                     }
                 ],
@@ -818,7 +867,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successed to patch book",
                         "schema": {
-                            "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.PatchBookResponse"
+                            "$ref": "#/definitions/internal_features_bookshelf_transport_http.PatchBookResponse"
                         }
                     },
                     "400": {
@@ -857,7 +906,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse": {
+        "github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse": {
             "type": "object",
             "properties": {
                 "author": {
@@ -904,7 +953,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_books_transport_http.BookDTOResponse": {
+        "internal_features_books_transport_http.BookDTOResponse": {
             "type": "object",
             "properties": {
                 "author": {
@@ -951,7 +1000,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_books_transport_http.GetBookResponse": {
+        "internal_features_books_transport_http.GetBookResponse": {
             "type": "object",
             "properties": {
                 "author": {
@@ -998,7 +1047,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_books_transport_http.ReviewDTOResponse": {
+        "internal_features_books_transport_http.RecentReviewDTOResponse": {
+            "type": "object",
+            "properties": {
+                "book": {
+                    "$ref": "#/definitions/internal_features_books_transport_http.BookDTOResponse"
+                },
+                "review": {
+                    "$ref": "#/definitions/internal_features_books_transport_http.ReviewDTOResponse"
+                }
+            }
+        },
+        "internal_features_books_transport_http.ReviewDTOResponse": {
             "type": "object",
             "properties": {
                 "rating": {
@@ -1013,6 +1073,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Одна из лучших книг, что я читал."
                 },
+                "reviewed_at": {
+                    "type": "string",
+                    "example": "2026-01-20T18:30:00Z"
+                },
                 "user_id": {
                     "type": "integer",
                     "example": 1
@@ -1023,7 +1087,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.AddBookRequest": {
+        "internal_features_bookshelf_transport_http.AddBookRequest": {
             "type": "object",
             "required": [
                 "book_id"
@@ -1036,18 +1100,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.AddBookResponse": {
+        "internal_features_bookshelf_transport_http.AddBookResponse": {
             "type": "object",
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse"
+                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse"
                 },
                 "shelf": {
-                    "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse"
+                    "$ref": "#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse"
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.EventDTO": {
+        "internal_features_bookshelf_transport_http.EventDTO": {
             "type": "object",
             "properties": {
                 "at": {
@@ -1080,29 +1144,29 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.GetBookResponse": {
+        "internal_features_bookshelf_transport_http.GetBookResponse": {
             "type": "object",
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse"
+                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse"
                 },
                 "shelf": {
-                    "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse"
+                    "$ref": "#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse"
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.PatchBookResponse": {
+        "internal_features_bookshelf_transport_http.PatchBookResponse": {
             "type": "object",
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse"
+                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse"
                 },
                 "shelf": {
-                    "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse"
+                    "$ref": "#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse"
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.PatchShelfBookRequest": {
+        "internal_features_bookshelf_transport_http.PatchShelfBookRequest": {
             "type": "object",
             "properties": {
                 "rating": {
@@ -1119,7 +1183,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse": {
+        "internal_features_bookshelf_transport_http.ShelfBookDTOResponse": {
             "type": "object",
             "properties": {
                 "added_at": {
@@ -1146,6 +1210,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Одна из лучших книг, что я читал."
                 },
+                "reviewed_at": {
+                    "type": "string",
+                    "example": "2026-01-20T18:30:00Z"
+                },
                 "user_id": {
                     "type": "integer",
                     "example": 1
@@ -1156,18 +1224,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_bookshelf_transport_http.ShelfBookWithBookDTOResponse": {
+        "internal_features_bookshelf_transport_http.ShelfBookWithBookDTOResponse": {
             "type": "object",
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_featurs_books_transport_http.BookDTOResponse"
+                    "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse"
                 },
                 "shelf": {
-                    "$ref": "#/definitions/internal_featurs_bookshelf_transport_http.ShelfBookDTOResponse"
+                    "$ref": "#/definitions/internal_features_bookshelf_transport_http.ShelfBookDTOResponse"
                 }
             }
         },
-        "internal_featurs_statistics_transport_http.BookDTOResponse": {
+        "internal_features_statistics_transport_http.BookDTOResponse": {
             "type": "object",
             "properties": {
                 "author": {
@@ -1214,7 +1282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_statistics_transport_http.GetStatsResponse": {
+        "internal_features_statistics_transport_http.GetStatsResponse": {
             "type": "object",
             "properties": {
                 "books_count": {
@@ -1232,13 +1300,13 @@ const docTemplate = `{
                 "top_by_reads": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse"
+                        "$ref": "#/definitions/internal_features_statistics_transport_http.BookDTOResponse"
                     }
                 },
                 "top_by_score": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_featurs_statistics_transport_http.BookDTOResponse"
+                        "$ref": "#/definitions/internal_features_statistics_transport_http.BookDTOResponse"
                     }
                 },
                 "users_count": {
@@ -1247,7 +1315,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_users_transport_http.CreateUserRequest": {
+        "internal_features_users_transport_http.CreateUserRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1260,28 +1328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_users_transport_http.CreateUserResponse": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "username": {
-                    "type": "string",
-                    "example": "book_worm07"
-                },
-                "version": {
-                    "type": "integer",
-                    "example": 3
-                }
-            }
-        },
-        "internal_featurs_users_transport_http.GetUserResponse": {
+        "internal_features_users_transport_http.CreateUserResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1302,7 +1349,28 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_users_transport_http.PatchUserRequest": {
+        "internal_features_users_transport_http.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "lol@mail.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "username": {
+                    "type": "string",
+                    "example": "book_worm07"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "internal_features_users_transport_http.PatchUserRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1315,7 +1383,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_users_transport_http.PatchedUserResponse": {
+        "internal_features_users_transport_http.PatchedUserResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1336,7 +1404,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_featurs_users_transport_http.UserDTOResponse": {
+        "internal_features_users_transport_http.UserDTOResponse": {
             "type": "object",
             "properties": {
                 "email": {

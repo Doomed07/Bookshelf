@@ -2,11 +2,9 @@ package core_http_response
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
-	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	"go.uber.org/zap"
 )
@@ -39,24 +37,14 @@ func (h *HTTPResponseHandler) StatusCodeResponse(statusCode int) {
 }
 
 func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
-	var (
-		statusCode int
-		logFunc    func(string, ...zap.Field)
-	)
+	statusCode := StatusFromError(err)
 
-	switch {
-	case errors.Is(err, core_errors.ErrConflict):
-		statusCode = http.StatusConflict
+	logFunc := h.log.Error
+	switch statusCode {
+	case http.StatusConflict, http.StatusBadRequest:
 		logFunc = h.log.Warn
-	case errors.Is(err, core_errors.ErrInvalidArgument):
-		statusCode = http.StatusBadRequest
-		logFunc = h.log.Warn
-	case errors.Is(err, core_errors.ErrNotFound):
-		statusCode = http.StatusNotFound
+	case http.StatusNotFound:
 		logFunc = h.log.Debug
-	default:
-		statusCode = http.StatusInternalServerError
-		logFunc = h.log.Error
 	}
 
 	logFunc(msg, zap.Error(err))
