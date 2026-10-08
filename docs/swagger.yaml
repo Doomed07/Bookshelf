@@ -44,6 +44,70 @@ definitions:
         example: 1937
         type: integer
     type: object
+  internal_features_auth_transport_http.LoginRequest:
+    properties:
+      login:
+        example: book_worm07 or lol@mail.com
+        type: string
+      password:
+        example: LoveBooks01!
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  internal_features_auth_transport_http.LoginResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+    type: object
+  internal_features_auth_transport_http.RegisterRequest:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      password:
+        example: LoveBooks01!
+        type: string
+      username:
+        example: book_worm07
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  internal_features_auth_transport_http.RegisterResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+    type: object
+  internal_features_auth_transport_http.UserDTOResponse:
+    properties:
+      email:
+        example: lol@mail.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: book_worm07
+        type: string
+    type: object
   internal_features_books_transport_http.BookDTOResponse:
     properties:
       author:
@@ -303,35 +367,8 @@ definitions:
         example: 128
         type: integer
     type: object
-  internal_features_users_transport_http.CreateUserRequest:
-    properties:
-      email:
-        example: lol@mail.com
-        type: string
-      username:
-        example: book_worm07
-        type: string
-    type: object
-  internal_features_users_transport_http.CreateUserResponse:
-    properties:
-      email:
-        example: lol@mail.com
-        type: string
-      id:
-        example: 1
-        type: integer
-      username:
-        example: book_worm07
-        type: string
-      version:
-        example: 3
-        type: integer
-    type: object
   internal_features_users_transport_http.GetUserResponse:
     properties:
-      email:
-        example: lol@mail.com
-        type: string
       id:
         example: 1
         type: integer
@@ -353,9 +390,6 @@ definitions:
     type: object
   internal_features_users_transport_http.PatchedUserResponse:
     properties:
-      email:
-        example: lol@mail.com
-        type: string
       id:
         example: 1
         type: integer
@@ -368,9 +402,6 @@ definitions:
     type: object
   internal_features_users_transport_http.UserDTOResponse:
     properties:
-      email:
-        example: lol@mail.com
-        type: string
       id:
         example: 1
         type: integer
@@ -388,6 +419,123 @@ info:
   title: Bookshelf API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Sign in by username or email (a login with `@` is treated as email) and password.
+        On success the response sets the HttpOnly session cookie `shelfmate_session`; every login issues a new token.
+        Wrong login and wrong password produce the same 401 response.
+      parameters:
+      - description: Login request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_auth_transport_http.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Signed in, session cookie set
+          schema:
+            $ref: '#/definitions/internal_features_auth_transport_http.LoginResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "401":
+          description: Invalid login or password
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Delete the current session and clear the session cookie. Login is not required: without a session the response is still 204.
+        Requests must carry `Content-Type: application/json`, even with an empty body.
+      responses:
+        "204":
+          description: Signed out, session cookie cleared
+        "400":
+          description: Content-Type is not application/json
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "403":
+          description: Cross-site request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Logout
+      tags:
+      - auth
+  /auth/me:
+    get:
+      description: Return the signed-in user, including the email (the email is visible
+        only to its owner). Requires the session cookie.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Current user
+          schema:
+            $ref: '#/definitions/internal_features_auth_transport_http.UserDTOResponse'
+        "401":
+          description: Not signed in
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Current user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Create a new account and sign in. On success the response sets the HttpOnly session cookie `shelfmate_session`.
+        Username: 3-30 chars, latin letters, digits and `_`, unique case-insensitively. Email is stored in lower case.
+        Password: 8-72 printable ASCII chars (latin letters, digits, symbols; no spaces), must not equal the username.
+      parameters:
+      - description: Register request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_auth_transport_http.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Account created, session cookie set
+          schema:
+            $ref: '#/definitions/internal_features_auth_transport_http.RegisterResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "409":
+          description: Username or email is already taken
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
+      summary: Register
+      tags:
+      - auth
   /books:
     get:
       description: Get a paginated list of books, optionally filtered by title/author
@@ -614,35 +762,6 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
       summary: List users
-      tags:
-      - users
-    post:
-      consumes:
-      - application/json
-      description: Create new user in the app
-      parameters:
-      - description: CreateUser request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/internal_features_users_transport_http.CreateUserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successed to create user
-          schema:
-            $ref: '#/definitions/internal_features_users_transport_http.CreateUserResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse'
-      summary: Create user
       tags:
       - users
   /users/{id}:

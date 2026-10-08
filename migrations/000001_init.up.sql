@@ -1,16 +1,32 @@
 CREATE SCHEMA bookshelfapp;
 
 CREATE TABLE bookshelfapp.users (
-    id          SERIAL PRIMARY KEY,
-    version     BIGINT NOT NULL DEFAULT 1,
-    username    VARCHAR(30) NOT NULL UNIQUE,
-    email       VARCHAR(254) NOT NULL UNIQUE,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    id              SERIAL PRIMARY KEY,
+    version         BIGINT NOT NULL DEFAULT 1,
+    username        VARCHAR(30) NOT NULL,
+    password_hash   TEXT NOT NULL,
+    email           VARCHAR(254) NOT NULL UNIQUE,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT users_username_format CHECK (username ~ '^[A-Za-z0-9_]{3,30}$'),
+    CONSTRAINT users_password_hash_len CHECK (length(password_hash) = 60),
     CONSTRAINT users_email_lowercase CHECK (email = lower(email)),
     CONSTRAINT users_email_format CHECK (email ~ '^[a-z0-9._+-]+@([a-z0-9-]+\.)+[a-z]{2,}$')
 );
+
+CREATE UNIQUE INDEX users_username_lower_uidx ON bookshelfapp.users (lower(username));
+
+CREATE TABLE bookshelfapp.sessions (
+    token_hash BYTEA PRIMARY KEY CHECK (octet_length(token_hash) = 32),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    CHECK (expires_at > created_at),
+
+    user_id    INT NOT NULL REFERENCES bookshelfapp.users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX sessions_user_id_idx    ON bookshelfapp.sessions (user_id);
+CREATE INDEX sessions_expires_at_idx ON bookshelfapp.sessions (expires_at);
 
 CREATE TABLE bookshelfapp.books (
     id          SERIAL PRIMARY KEY,
@@ -51,6 +67,7 @@ CREATE TABLE bookshelfapp.bookshelf (
     review      VARCHAR(5000),
     added_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     read_at     TIMESTAMPTZ, 
+    reviewed_at TIMESTAMPTZ,
 
     user_id     INT NOT NULL REFERENCES bookshelfapp.users(id) ON DELETE CASCADE,
     book_id     INT NOT NULL REFERENCES bookshelfapp.books(id),
@@ -62,12 +79,18 @@ CREATE TABLE bookshelfapp.bookshelf (
     ), 
     CONSTRAINT bookshelf_rating_range CHECK (rating BETWEEN 1 AND 100),
     CONSTRAINT bookshelf_review_range CHECK (char_length(review) >= 1 AND review = btrim(review)),
-    CONSTRAINT bookshelf_pkey PRIMARY KEY (user_id, book_id)
+    CONSTRAINT bookshelf_pkey PRIMARY KEY (user_id, book_id),
+    CONSTRAINT bookshelf_reviewed_at_state CHECK (
+    (review IS NULL AND reviewed_at IS NULL)
+    OR
+    (review IS NOT NULL AND reviewed_at IS NOT NULL AND reviewed_at >= read_at))
 );
 
 CREATE INDEX bookshelf_book_id_idx ON bookshelfapp.bookshelf (book_id);
 CREATE INDEX books_score_idx       ON bookshelfapp.books (score DESC NULLS LAST, id);
 CREATE INDEX books_reads_count_idx ON bookshelfapp.books (reads_count DESC, id);
+CREATE INDEX bookshelf_reviewed_at_idx
+    ON bookshelfapp.bookshelf (reviewed_at DESC) WHERE review IS NOT NULL;
 
 CREATE FUNCTION bookshelfapp.update_book_stats() RETURNS trigger AS $$
 BEGIN

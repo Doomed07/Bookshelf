@@ -4,7 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 
@@ -30,9 +31,10 @@ func NewBookshelfHTTPHandler(bookshelfService BookshelfService) *BookshelfHTTPHa
 func (h *BookshelfHTTPHandler) Routes() []core_http_server.Route {
 	return []core_http_server.Route{
 		{
-			Method:  http.MethodPost,
-			Path:    "/users/{user_id}/bookshelf",
-			Handler: h.AddBook,
+			Method:      http.MethodPost,
+			Path:        "/users/{user_id}/bookshelf",
+			Handler:     h.AddBook,
+			Middlewares: []core_http_middleware.Middleware{core_http_middleware.RequireSelf("user_id")},
 		},
 		{
 			Method:  http.MethodGet,
@@ -50,14 +52,16 @@ func (h *BookshelfHTTPHandler) Routes() []core_http_server.Route {
 			Handler: h.GetUserActivity,
 		},
 		{
-			Method:  http.MethodPatch,
-			Path:    "/users/{user_id}/bookshelf/{book_id}",
-			Handler: h.PatchBook,
+			Method:      http.MethodPatch,
+			Path:        "/users/{user_id}/bookshelf/{book_id}",
+			Handler:     h.PatchBook,
+			Middlewares: []core_http_middleware.Middleware{core_http_middleware.RequireSelf("user_id")},
 		},
 		{
-			Method:  http.MethodDelete,
-			Path:    "/users/{user_id}/bookshelf/{book_id}",
-			Handler: h.RemoveBook,
+			Method:      http.MethodDelete,
+			Path:        "/users/{user_id}/bookshelf/{book_id}",
+			Handler:     h.RemoveBook,
+			Middlewares: []core_http_middleware.Middleware{core_http_middleware.RequireSelf("user_id")},
 		},
 	}
 }

@@ -114,6 +114,11 @@ func Routes(books BooksService, users UsersService) []core_http_server.Route {
 		},
 		{
 			Method:  http.MethodGet,
+			Path:    "/login",
+			Handler: page("login.html", http.StatusOK),
+		},
+		{
+			Method:  http.MethodGet,
 			Path:    "/about",
 			Handler: page("about.html", http.StatusOK),
 		},

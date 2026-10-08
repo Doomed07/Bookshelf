@@ -15,6 +15,171 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Sign in by username or email (a login with ` + "`" + `@` + "`" + ` is treated as email) and password.\nOn success the response sets the HttpOnly session cookie ` + "`" + `shelfmate_session` + "`" + `; every login issues a new token.\nWrong login and wrong password produce the same 401 response.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_auth_transport_http.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Signed in, session cookie set",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_auth_transport_http.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid login or password",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "description": "Delete the current session and clear the session cookie. Login is not required: without a session the response is still 204.\nRequests must carry ` + "`" + `Content-Type: application/json` + "`" + `, even with an empty body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout",
+                "responses": {
+                    "204": {
+                        "description": "Signed out, session cookie cleared"
+                    },
+                    "400": {
+                        "description": "Content-Type is not application/json",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Cross-site request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "description": "Return the signed-in user, including the email (the email is visible only to its owner). Requires the session cookie.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Current user",
+                "responses": {
+                    "200": {
+                        "description": "Current user",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_auth_transport_http.UserDTOResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Not signed in",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Create a new account and sign in. On success the response sets the HttpOnly session cookie ` + "`" + `shelfmate_session` + "`" + `.\nUsername: 3-30 chars, latin letters, digits and ` + "`" + `_` + "`" + `, unique case-insensitively. Email is stored in lower case.\nPassword: 8-72 printable ASCII chars (latin letters, digits, symbols; no spaces), must not equal the username.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "Register request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_auth_transport_http.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Account created, session cookie set",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_auth_transport_http.RegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Username or email is already taken",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/books": {
             "get": {
                 "description": "Get a paginated list of books, optionally filtered by title/author",
@@ -336,50 +501,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/internal_features_users_transport_http.UserDTOResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create new user in the app",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Create user",
-                "parameters": [
-                    {
-                        "description": "CreateUser request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successed to create user",
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserResponse"
                         }
                     },
                     "400": {
@@ -953,6 +1074,96 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_features_auth_transport_http.LoginRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "example": "book_worm07 or lol@mail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "LoveBooks01!"
+                }
+            }
+        },
+        "internal_features_auth_transport_http.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "lol@mail.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "username": {
+                    "type": "string",
+                    "example": "book_worm07"
+                }
+            }
+        },
+        "internal_features_auth_transport_http.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "lol@mail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "LoveBooks01!"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "book_worm07"
+                }
+            }
+        },
+        "internal_features_auth_transport_http.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "lol@mail.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "username": {
+                    "type": "string",
+                    "example": "book_worm07"
+                }
+            }
+        },
+        "internal_features_auth_transport_http.UserDTOResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "lol@mail.com"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "username": {
+                    "type": "string",
+                    "example": "book_worm07"
+                }
+            }
+        },
         "internal_features_books_transport_http.BookDTOResponse": {
             "type": "object",
             "properties": {
@@ -1315,47 +1526,9 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_features_users_transport_http.CreateUserRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "book_worm07"
-                }
-            }
-        },
-        "internal_features_users_transport_http.CreateUserResponse": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "username": {
-                    "type": "string",
-                    "example": "book_worm07"
-                },
-                "version": {
-                    "type": "integer",
-                    "example": 3
-                }
-            }
-        },
         "internal_features_users_transport_http.GetUserResponse": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
                 "id": {
                     "type": "integer",
                     "example": 1
@@ -1386,10 +1559,6 @@ const docTemplate = `{
         "internal_features_users_transport_http.PatchedUserResponse": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
                 "id": {
                     "type": "integer",
                     "example": 1
@@ -1407,10 +1576,6 @@ const docTemplate = `{
         "internal_features_users_transport_http.UserDTOResponse": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "lol@mail.com"
-                },
                 "id": {
                     "type": "integer",
                     "example": 1

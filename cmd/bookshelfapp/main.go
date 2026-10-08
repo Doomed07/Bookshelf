@@ -8,11 +8,15 @@ import (
 	"syscall"
 	"time"
 
+	core_auth "github.com/Doomed07/Bookshelf/internal/core/auth"
 	core_config "github.com/Doomed07/Bookshelf/internal/core/config"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
 	core_postgres_pgx "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
+	auth_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/auth/repository/postgres"
+	auth_service "github.com/Doomed07/Bookshelf/internal/features/auth/service"
+	auth_transport_http "github.com/Doomed07/Bookshelf/internal/features/auth/transport/http"
 	books_repository_postgres "github.com/Doomed07/Bookshelf/internal/features/books/repository/postgres"
 	books_service "github.com/Doomed07/Bookshelf/internal/features/books/service"
 	books_transport_http "github.com/Doomed07/Bookshelf/internal/features/books/transport/http"
@@ -39,8 +43,8 @@ import (
 func main() {
 	cfg := core_config.NewConfigMust()
 	time.Local = cfg.TimeZone
-
 	statsConfig := statistics_service.NewConfigMust()
+	authConfig := core_auth.NewConfigMust()
 
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
@@ -87,6 +91,14 @@ func main() {
 	statsService := statistics_service.NewStatsService(statsRepository, statsConfig)
 	statsTransportHTTP := statistics_transport_http.NewStatsHTTPHandler(statsService)
 
+	logger.Debug("initializing feature", zap.String("feature", "Auth"))
+	authRepository := auth_repository_postgres.NewAuthRepository(pool)
+	authService, err := auth_service.NewAuthService(authRepository, authConfig.BcryptCost, authConfig.SessionTTL)
+	if err != nil {
+		logger.Fatal("failed to init auth service", zap.Error(err))
+	}
+	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService, authConfig.SessionTTL, authConfig.CookieSecure)
+
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
 		core_http_server.NewConfigMust(),
@@ -98,11 +110,17 @@ func main() {
 		core_http_middleware.Panic(),
 	)
 
-	apiVersionRouterV1 := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
+	apiVersionRouterV1 := core_http_server.NewAPIVersionRouter(
+		core_http_server.ApiVersion1,
+		core_http_middleware.SameOrigin(),
+		core_http_middleware.Authenticate(authService),
+	)
+
 	apiVersionRouterV1.RegisterRoutes(usersTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(booksTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(bookshelfTransportHTTP.Routes()...)
 	apiVersionRouterV1.RegisterRoutes(statsTransportHTTP.Routes()...)
+	apiVersionRouterV1.RegisterRoutes(authTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouterV1)
 

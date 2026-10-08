@@ -12,7 +12,7 @@ start({ nav: 'users' }, async () => {
 
   setTitle('Читатели');
 
-  // API отдаёт и email, но это личные данные — на странице показываем только имя
+  // API отдаёт только публичные данные: id, имя и версию
   const list = users.length === 0
     ? emptyState(html`Читателей пока нет. <a href="/signup">Станьте первым</a>.`)
     : html`<ul class="user-grid">${users.map((u) => html`

@@ -18,13 +18,13 @@ func TestStatusFromError(t *testing.T) {
 		{name: "conflict", err: core_errors.ErrConflict, want: http.StatusConflict},
 		{name: "invalid argument", err: core_errors.ErrInvalidArgument, want: http.StatusBadRequest},
 		{name: "not found", err: core_errors.ErrNotFound, want: http.StatusNotFound},
+		{name: "unauthorized", err: core_errors.ErrUnauthorized, want: http.StatusUnauthorized},
+		{name: "forbidden", err: core_errors.ErrForbidden, want: http.StatusForbidden},
 		{
 			name: "wrapped twice",
 			err:  fmt.Errorf("service: %w", fmt.Errorf("repo: %w", core_errors.ErrNotFound)),
 			want: http.StatusNotFound,
 		},
-		// %w можно указать дважды — тогда ошибка «является» обеими sentinel-ошибками,
-		// и статус решает порядок проверок в StatusFromError
 		{
 			name: "conflict wins over invalid argument",
 			err:  fmt.Errorf("%w: %w", core_errors.ErrInvalidArgument, core_errors.ErrConflict),

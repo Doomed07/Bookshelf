@@ -28,7 +28,8 @@ func TestHTTPResponseHandler_ErrorResponse(t *testing.T) {
 		{name: "invalid argument", err: core_errors.ErrInvalidArgument, wantStatus: http.StatusBadRequest},
 		{name: "not found", err: core_errors.ErrNotFound, wantStatus: http.StatusNotFound},
 		{name: "conflict", err: core_errors.ErrConflict, wantStatus: http.StatusConflict},
-		// ошибки из сервисов приходят обёрнутыми через %w — статус должен определяться и так
+		{name: "unauthorized", err: core_errors.ErrUnauthorized, wantStatus: http.StatusUnauthorized},
+		{name: "forbidden", err: core_errors.ErrForbidden, wantStatus: http.StatusForbidden},
 		{
 			name:       "wrapped not found",
 			err:        fmt.Errorf("get user: %w", fmt.Errorf("repo: %w", core_errors.ErrNotFound)),
