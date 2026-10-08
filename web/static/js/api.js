@@ -1,9 +1,12 @@
 // Обёртка над JSON API /api/v1.
 
 export class ApiError extends Error {
-  constructor(status, message) {
+  // detail — технический текст ошибки от сервера (поле "error"); по нему формы
+  // отличают «имя занято» от «email занят». Пользователю его не показываем.
+  constructor(status, message, detail = '') {
     super(message);
     this.status = status;
+    this.detail = detail;
   }
 }
 
@@ -38,7 +41,31 @@ export async function api(path, { method = 'GET', body } = {}) {
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, (data && data.message) || response.statusText);
+    throw new ApiError(response.status, (data && data.message) || response.statusText, (data && data.error) || '');
   }
   return data;
 }
+
+// ---------- Аккаунт ----------
+// Сессия живёт в HttpOnly-cookie: JS её не видит, браузер сам прикладывает её к запросам.
+
+export const auth = {
+  register: (username, email, password) =>
+    api('/auth/register', { method: 'POST', body: { username, email, password } }),
+
+  login: (login, password) => api('/auth/login', { method: 'POST', body: { login, password } }),
+
+  // Тело {} нужно ради заголовка Content-Type: application/json: без него сервер
+  // отклонит запрос (защита от подделки запросов с чужих сайтов).
+  logout: () => api('/auth/logout', { method: 'POST', body: {} }),
+
+  // me — вошедший пользователь или null, если не вошёл (401 здесь не ошибка).
+  async me() {
+    try {
+      return await api('/auth/me');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) return null;
+      throw err;
+    }
+  },
+};

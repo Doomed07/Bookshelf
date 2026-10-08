@@ -21,7 +21,7 @@
       <div class="container page page--narrow">
         <header class="page-header">
           <h1 class="page-title">Регистрация</h1>
-          <p class="page-subtitle">Заведите читательский профиль — достаточно имени и email.</p>
+          <p class="page-subtitle">Заведите читательский профиль — достаточно имени, email и пароля.</p>
         </header>
         <p class="alert" role="alert" id="signup-alert" hidden></p>
         <form class="form" id="signup-form" action="/signup" method="post" novalidate>
@@ -35,8 +35,14 @@
             <input class="form__input" id="signup-email" name="email" type="email" required maxlength="254" autocomplete="email" aria-describedby="signup-email-hint">
             <p class="form__hint" id="signup-email-hint" hidden></p>
           </div>
+          <div class="form__field">
+            <label class="form__label" for="signup-password">Пароль</label>
+            <input class="form__input" id="signup-password" name="password" type="password" required minlength="8" maxlength="72" pattern="[\x21-\x7E]{8,72}" autocomplete="new-password" aria-describedby="signup-password-hint">
+            <p class="form__hint" id="signup-password-hint">От 8 до 72 символов: латинские буквы, цифры и символы, без пробелов.</p>
+          </div>
           <button class="button button--cta" type="submit">Создать профиль</button>
         </form>
+        <p class="form__hint form__footnote">Уже есть аккаунт? <a href="/login">Войти</a>.</p>
       </div>
     </div>
   </main>

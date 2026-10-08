@@ -15,6 +15,9 @@ services:
       - LOGGER_LVL=${LOGGER_LVL}
       - TIME_ZONE=${TIME_ZONE}
       - STATS_MIN_RATINGS=${STATS_MIN_RATINGS}
+      - AUTH_SESSION_TTL=${AUTH_SESSION_TTL}
+      - AUTH_BCRYPT_COST=${AUTH_BCRYPT_COST}
+      - AUTH_COOKIE_SECURE=${AUTH_COOKIE_SECURE}
       - LOGGER_FOLDER=/app/out/logs
     volumes:
       - ${PROJECT_ROOT}/out/logs:/app/out/logs

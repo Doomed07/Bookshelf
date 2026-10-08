@@ -41,7 +41,8 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 
 	logFunc := h.log.Error
 	switch statusCode {
-	case http.StatusConflict, http.StatusBadRequest:
+	case http.StatusConflict, http.StatusBadRequest,
+		http.StatusUnauthorized, http.StatusForbidden:
 		logFunc = h.log.Warn
 	case http.StatusNotFound:
 		logFunc = h.log.Debug

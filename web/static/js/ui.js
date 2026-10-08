@@ -3,7 +3,7 @@
 // Разметка собирается шаблоном html`…`: всё, что подставляется в ${…}, экранируется,
 // кроме вложенных html`…`. Поэтому текст из базы (рецензии, имена) не может стать HTML-кодом.
 
-import { ApiError } from './api.js';
+import { ApiError, auth } from './api.js';
 import { avatarClass, coverClass, initial, scoreClass } from './format.js';
 
 class SafeHTML {
@@ -45,7 +45,6 @@ export const $ = (selector) => document.querySelector(selector);
 // ---------- Шапка и подвал ----------
 
 const NAV = [
-  { key: 'signup', href: '/signup', label: 'Регистрация' },
   { key: 'books', href: '/books', label: 'Книги' },
   { key: 'users', href: '/users', label: 'Читатели' },
   { key: 'stats', href: '/stats', label: 'Статистика' },
@@ -77,6 +76,7 @@ function header({ nav = '', navDetail = false, search = '' }) {
             <span class="visually-hidden">Искать</span>
           </button>
         </form>
+        <div class="auth-nav" id="auth-nav"></div>
       </div>
     </header>`;
 }
@@ -97,10 +97,74 @@ function footer() {
     </footer>`;
 }
 
-// renderLayout вставляет шапку и подвал в #site-header и #site-footer страницы.
+// ---------- Аккаунт ----------
+
+let account;
+
+// currentUser — вошедший пользователь ({id, username, email}) или null.
+// Запрос к /auth/me делается один раз на страницу; любой сбой считается «не вошёл»,
+// чтобы шапка не ломала страницу. Запрос стартует уже при загрузке модуля.
+export function currentUser() {
+  account ??= auth.me().catch((err) => {
+    if (!(err instanceof ApiError)) console.error(err);
+    return null;
+  });
+  return account;
+}
+currentUser();
+
+function authNav(user, nav) {
+  if (!user) {
+    const current = (key) => (nav === key ? html` aria-current="page"` : '');
+    return html`
+      <a class="auth-nav__link" href="/login"${current('login')}>Войти</a>
+      <a class="button button--cta auth-nav__cta" href="/signup"${current('signup')}>Регистрация</a>`;
+  }
+  return html`
+    <a class="auth-nav__link auth-nav__user" href="/users/${user.id}" title="Мой профиль">${user.username}</a>
+    <button class="auth-nav__link auth-nav__button" type="button" id="logout-button">Выйти</button>`;
+}
+
+async function logout(button) {
+  button.disabled = true;
+  try {
+    await auth.logout();
+    location.reload();
+  } catch {
+    button.disabled = false;
+    button.textContent = 'Не вышло. Ещё раз?';
+  }
+}
+
+function showAccount(user, nav) {
+  const slot = $('#auth-nav');
+  if (!slot) return;
+  mount(slot, authNav(user, nav));
+  const button = $('#logout-button');
+  if (button) button.addEventListener('click', () => logout(button));
+}
+
+// safeNext — адрес для возврата после входа (?next=…). Пускаем только путь на этом же сайте:
+// иначе ссылка вида /login?next=//evil.example уводила бы человека на чужой сайт сразу после входа.
+export function safeNext(raw, fallback) {
+  if (!raw || raw[0] !== '/' || raw[1] === '/' || raw[1] === '\\') return fallback;
+  if (/[\u0000-\u001f\u007f]/.test(raw)) return fallback;
+  try {
+    const url = new URL(raw, location.origin);
+    if (url.origin !== location.origin) return fallback;
+    if (url.pathname === '/login' || url.pathname === '/signup') return fallback; // не возвращаем на форму входа
+    return url.pathname + url.search + url.hash;
+  } catch {
+    return fallback;
+  }
+}
+
+// renderLayout вставляет шапку и подвал в #site-header и #site-footer страницы
+// и, когда станет известно, кто вошёл, — ссылки аккаунта в шапку.
 export function renderLayout(options = {}) {
   mount($('#site-header'), header(options));
   mount($('#site-footer'), footer());
+  currentUser().then((user) => showAccount(user, options.nav));
 }
 
 export function setTitle(title) {
@@ -197,8 +261,11 @@ export function pagination(page, hasNext) {
 
 const ERRORS = {
   400: ['Некорректный запрос', 'Проверьте адрес страницы или параметры фильтра.'],
+  401: ['Нужно войти', 'Войдите в аккаунт, чтобы продолжить.'],
+  403: ['Недостаточно прав', 'Это действие доступно только владельцу профиля.'],
   404: ['Страница не найдена', 'Возможно, её удалили или в адресе опечатка.'],
   409: ['Конфликт данных', 'Данные изменились, пока вы их смотрели. Обновите страницу.'],
+  429: ['Слишком много запросов', 'Подождите немного и попробуйте снова.'],
 };
 
 export function errorView(status) {

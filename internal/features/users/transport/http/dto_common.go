@@ -6,7 +6,6 @@ type UserDTOResponse struct {
 	ID       int    `json:"id" example:"1"`
 	Version  int    `json:"version" example:"3"`
 	Username string `json:"username" example:"book_worm07"`
-	Email    string `json:"email" example:"lol@mail.com"`
 }
 
 func userDTOFromDomain(user core_domain.User) UserDTOResponse {
@@ -14,7 +13,6 @@ func userDTOFromDomain(user core_domain.User) UserDTOResponse {
 		ID:       user.ID,
 		Version:  user.Version,
 		Username: user.Username,
-		Email:    user.Email,
 	}
 }
 

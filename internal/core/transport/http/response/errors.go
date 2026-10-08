@@ -22,6 +22,10 @@ func StatusFromError(err error) int {
 		return http.StatusBadRequest
 	case errors.Is(err, core_errors.ErrNotFound):
 		return http.StatusNotFound
+	case errors.Is(err, core_errors.ErrUnauthorized):
+		return http.StatusUnauthorized
+	case errors.Is(err, core_errors.ErrForbidden):
+		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
 	}

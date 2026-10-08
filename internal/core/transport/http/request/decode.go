@@ -2,6 +2,7 @@ package core_http_request
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -11,12 +12,23 @@ import (
 
 var requestValidator = validator.New()
 
+// MaxRequestBodyBytes — предел размера тела запроса. Все наши запросы крошечные
+// (самое длинное — рецензия до 5000 символов), 1 МиБ с огромным запасом.
+const MaxRequestBodyBytes = 1 << 20
+
 type Validatable interface {
 	Validate() error
 }
 
 func DecodeAndValidateRequest(r *http.Request, dest any) error {
-	if err := json.NewDecoder(r.Body).Decode(dest); err != nil {
+	body := http.MaxBytesReader(nil, r.Body, MaxRequestBodyBytes)
+
+	if err := json.NewDecoder(body).Decode(dest); err != nil {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) {
+			return fmt.Errorf("request body is larger than %d bytes: %w",
+				MaxRequestBodyBytes, core_errors.ErrInvalidArgument)
+		}
 		return fmt.Errorf("decode JSON: %v: %w", err, core_errors.ErrInvalidArgument)
 	}
 

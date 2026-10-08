@@ -43,14 +43,19 @@ func mapErrors(err error) error {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		if pgErr.Code == pgxUniqueViolationErrCode {
-			return fmt.Errorf("%v:%w",
-				err, core_postgres_pool.ErrUniqueViolation)
+			return &core_postgres_pool.ConstraintError{
+				Kind:       core_postgres_pool.ErrUniqueViolation,
+				Constraint: pgErr.ConstraintName,
+				Err:        err,
+			}
 		}
 		if pgErr.Code == pgxForeignKeyViolationErrCode {
-			return fmt.Errorf("%v:%w",
-				err, core_postgres_pool.ErrForeignKeyViolation)
+			return &core_postgres_pool.ConstraintError{
+				Kind:       core_postgres_pool.ErrForeignKeyViolation,
+				Constraint: pgErr.ConstraintName,
+				Err:        err,
+			}
 		}
-
 	}
 
 	return fmt.Errorf("%v:%w", err, core_postgres_pool.ErrUnknown)

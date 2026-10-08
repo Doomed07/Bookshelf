@@ -4,7 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
 )
 
@@ -13,7 +14,6 @@ type UsersHTTPHandler struct {
 }
 
 type UsersService interface {
-	CreateUser(ctx context.Context, user core_domain.User) (core_domain.User, error)
 	GetUsers(ctx context.Context, limit, offset *int) ([]core_domain.User, error)
 	GetUser(ctx context.Context, id int) (core_domain.User, error)
 	PatchUser(ctx context.Context, id int, patch core_domain.UserPatch) (core_domain.User, error)
@@ -29,11 +29,6 @@ func NewUsersHTTPHandler(usersService UsersService) *UsersHTTPHandler {
 func (h *UsersHTTPHandler) Routes() []core_http_server.Route {
 	return []core_http_server.Route{
 		{
-			Method:  http.MethodPost,
-			Path:    "/users",
-			Handler: h.CreateUser,
-		},
-		{
 			Method:  http.MethodGet,
 			Path:    "/users",
 			Handler: h.GetUsers,
@@ -44,14 +39,16 @@ func (h *UsersHTTPHandler) Routes() []core_http_server.Route {
 			Handler: h.GetUser,
 		},
 		{
-			Method:  http.MethodPatch,
-			Path:    "/users/{id}",
-			Handler: h.PatchUser,
+			Method:      http.MethodPatch,
+			Path:        "/users/{id}",
+			Handler:     h.PatchUser,
+			Middlewares: []core_http_middleware.Middleware{core_http_middleware.RequireSelf("id")},
 		},
 		{
-			Method:  http.MethodDelete,
-			Path:    "/users/{id}",
-			Handler: h.DeleteUser,
+			Method:      http.MethodDelete,
+			Path:        "/users/{id}",
+			Handler:     h.DeleteUser,
+			Middlewares: []core_http_middleware.Middleware{core_http_middleware.RequireSelf("id")},
 		},
 	}
 }

@@ -3,7 +3,7 @@ package users_service
 import (
 	"context"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
 )
 
 type UsersService struct {
@@ -11,7 +11,6 @@ type UsersService struct {
 }
 
 type UsersRepository interface {
-	CreateUser(ctx context.Context, user core_domain.User) (core_domain.User, error)
 	GetUsers(ctx context.Context, limit, offset int) ([]core_domain.User, error)
 	GetUser(ctx context.Context, id int) (core_domain.User, error)
 	PatchUser(ctx context.Context, id int, user core_domain.User) (core_domain.User, error)
