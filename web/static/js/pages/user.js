@@ -1,8 +1,10 @@
 import { api, ApiError, query } from '../api.js';
 import { date, duration, isoDate, number, percent, plural } from '../format.js';
 import {
-  $, avatar, cover, emptyState, html, mount, pageParam, pagination, pathID, score, setTitle, start, trimPage,
+  $, avatar, cover, currentUser, emptyState, html, mount, pageParam, pageURL, pagination, pathID, score, setTitle, start,
+  trimPage,
 } from '../ui.js';
+import { bindCardActions, cardActions } from '../shelf.js';
 
 const SHELF_PAGE_SIZE = 24;
 const ACTIVITY_LIMIT = 10;
@@ -27,16 +29,19 @@ function tabs(current, stats) {
     <a class="tabs__link" href="${t.url}"${t.key === current ? html` aria-current="page"` : ''}>${t.label} <span class="tabs__count">${number(t.count)}</span></a>`)}</nav>`;
 }
 
-function shelf(items, tab) {
+function shelf(items, tab, isOwner) {
   if (items.length === 0) {
     if (tab === 'read') return emptyState('Прочитанных книг пока нет.');
     if (tab === 'unread') return emptyState('Список «хочу прочитать» пуст.');
-    return emptyState(html`Полка пока пуста. Книги на полку пока добавляются через <a href="/swagger/">API</a>.`);
+    return isOwner
+      ? emptyState(html`Полка пока пуста. Найдите книгу в <a href="/books">каталоге</a> и нажмите «Хочу прочитать».`)
+      : emptyState('Полка пока пуста.');
   }
   return html`<ul class="poster-row poster-row--compact">${items.map(({ shelf: s, book }) => html`
     <li>
       ${cover(book)}
       <p class="poster-row__meta">${s.read ? (s.rating != null ? score(s.rating) : 'прочитано') : 'в планах'}</p>
+      ${isOwner ? cardActions(s, book) : ''}
     </li>`)}</ul>`;
 }
 
@@ -55,10 +60,14 @@ function activity(events) {
     </li>`)}</ol>`;
 }
 
-start({ nav: 'users', navDetail: true }, async () => {
+// load загружает и рисует профиль. После действия с полкой профиль перерисовывается заново.
+// afterChange: если на странице 2+ больше не осталось книг, переходим на предыдущую, а не показываем 404.
+async function load({ notice = '', afterChange = false } = {}) {
   const id = pathID();
   const { tab, read } = tabFromQuery();
   const page = pageParam();
+  const me = await currentUser();
+  const isOwner = Boolean(me && me.id === id);
 
   const [user, stats, found, events] = await Promise.all([
     api(`/users/${id}`),
@@ -68,7 +77,13 @@ start({ nav: 'users', navDetail: true }, async () => {
   ]);
 
   const [items, hasNext] = trimPage(found, SHELF_PAGE_SIZE);
-  if (items.length === 0 && page > 1) throw new ApiError(404, 'page after the last');
+  if (items.length === 0 && page > 1) {
+    if (afterChange) {
+      history.replaceState(null, '', pageURL(page - 1));
+      return load({ notice, afterChange });
+    }
+    throw new ApiError(404, 'page after the last');
+  }
 
   setTitle(user.username);
 
@@ -83,7 +98,11 @@ start({ nav: 'users', navDetail: true }, async () => {
         <section aria-labelledby="shelf-title">
           <h2 class="visually-hidden" id="shelf-title">Полка</h2>
           ${tabs(tab, stats)}
-          ${shelf(items, tab)}
+          <div id="shelf-list" tabindex="-1">
+            ${shelf(items, tab, isOwner)}
+            ${isOwner ? html`<p class="shelf-message" data-shelf-status role="status" aria-live="polite"></p>` : ''}
+            ${notice ? html`<p class="shelf-message shelf-message--error" role="alert">${notice}</p>` : ''}
+          </div>
           ${pagination(page, hasNext)}
         </section>
 
@@ -112,4 +131,15 @@ start({ nav: 'users', navDetail: true }, async () => {
         </aside>
       </div>
     </div>`);
-});
+
+  const list = $('#shelf-list');
+  if (isOwner) {
+    bindCardActions(list, {
+      userId: me.id,
+      reload: (message) => load({ notice: message, afterChange: true }),
+    });
+  }
+  if (afterChange) list.focus({ preventScroll: true });
+}
+
+start({ nav: 'users', navDetail: true }, () => load());
