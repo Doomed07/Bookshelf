@@ -1,8 +1,9 @@
 import { api, ApiError, query } from '../api.js';
 import { coverClass, date, decimal, isoDate, number, plural, pluralCount } from '../format.js';
 import {
-  $, avatar, coverLabel, emptyState, html, mount, pageParam, pagination, pathID, score, setTitle, start, trimPage,
+  $, avatar, coverLabel, currentUser, emptyState, html, mount, pageParam, pagination, pathID, score, setTitle, start, trimPage,
 } from '../ui.js';
+import { bindShelfPanel, getShelfBook, shelfPanel } from '../shelf.js';
 
 const REVIEWS_PAGE_SIZE = 10;
 
@@ -39,19 +40,36 @@ function reviewItem(r) {
         ${r.review
           ? html`<p class="review__text review__text--full">${r.review}</p>`
           : html`<p class="review__text review__text--muted">Оценка без рецензии</p>`}
-        <p class="review__date">Прочитано <time datetime="${isoDate(r.read_at)}">${date(r.read_at)}</time></p>
+        ${r.reviewed_at
+          ? html`<p class="review__date">Опубликовано <time datetime="${isoDate(r.reviewed_at)}">${date(r.reviewed_at)}</time></p>`
+          : html`<p class="review__date">Прочитано <time datetime="${isoDate(r.read_at)}">${date(r.read_at)}</time></p>`}
       </div>
     </li>`;
 }
 
-start({ nav: 'books', navDetail: true }, async () => {
+// myShelfEntry — запись этой книги на полке вошедшего: объект, null (нет на полке)
+// или undefined (не удалось загрузить — страница всё равно показывается).
+async function myShelfEntry(me, bookId) {
+  if (!me) return null;
+  try {
+    return await getShelfBook(me.id, bookId);
+  } catch {
+    return undefined;
+  }
+}
+
+// load загружает и рисует страницу целиком. После любого действия с полкой страница
+// перерисовывается заново: счётчики, гистограмма и список рецензий не устаревают.
+async function load({ notice = '', focusPanel = false } = {}) {
   const id = pathID();
   const page = pageParam();
+  const me = await currentUser();
 
-  const [book, stats, found] = await Promise.all([
+  const [book, stats, found, entry] = await Promise.all([
     api(`/books/${id}`),
     api('/stats' + query({ book_id: id })),
     api(`/books/${id}/reviews` + query({ limit: REVIEWS_PAGE_SIZE + 1, offset: (page - 1) * REVIEWS_PAGE_SIZE })),
+    myShelfEntry(me, id),
   ]);
 
   const [reviews, hasNext] = trimPage(found, REVIEWS_PAGE_SIZE);
@@ -72,6 +90,7 @@ start({ nav: 'books', navDetail: true }, async () => {
             ? html`<ul class="chips" aria-label="Жанры">${book.genres.map((g) => html`<li class="chip">${g}</li>`)}</ul>`
             : ''}
           <p class="book__description">${book.description}</p>
+          <div id="shelf-panel" tabindex="-1">${shelfPanel({ me, entry, notice })}</div>
         </div>
       </article>
 
@@ -105,4 +124,17 @@ start({ nav: 'books', navDetail: true }, async () => {
         ${pagination(page, hasNext)}
       </section>
     </div>`);
-});
+
+  const panel = $('#shelf-panel');
+  if (me && entry !== undefined) {
+    bindShelfPanel(panel, {
+      userId: me.id,
+      bookId: id,
+      reload: (message) => load({ notice: message, focusPanel: true }),
+    });
+  }
+  // после действия фокус возвращается в панель, иначе он теряется вместе с перерисованной кнопкой
+  if (focusPanel) panel.focus({ preventScroll: true });
+}
+
+start({ nav: 'books', navDetail: true }, () => load());

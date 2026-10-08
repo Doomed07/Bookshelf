@@ -1,5 +1,5 @@
 import { auth, ApiError } from '../api.js';
-import { $, currentUser, renderLayout, setTitle } from '../ui.js';
+import { $, currentUser, renderLayout, safeNext, setTitle } from '../ui.js';
 
 // Те же правила, что в домене (internal/core/domain/user.go): проверяем заранее,
 // чтобы показать ошибку у каждого поля, а не только первую от сервера.
@@ -33,9 +33,16 @@ const usernameHint = $('#signup-username-hint');
 const emailHint = $('#signup-email-hint');
 const passwordHint = $('#signup-password-hint');
 
+// Куда вести после регистрации: ?next=/books/3 (только путь на этом сайте) или в свой профиль.
+const next = new URLSearchParams(location.search).get('next');
+
+// Ссылка «Войти» под формой тоже передаёт next дальше.
+const loginLink = document.querySelector('.form__footnote a[href="/login"]');
+if (loginLink && next) loginLink.href = '/login?next=' + encodeURIComponent(next);
+
 // Уже вошли — регистрироваться не нужно.
 currentUser().then((user) => {
-  if (user) location.replace(`/users/${user.id}`);
+  if (user) location.replace(safeNext(next, `/users/${user.id}`));
 });
 
 function setFieldError(input, hint, message, defaultText = '') {
@@ -78,7 +85,7 @@ form.addEventListener('submit', async (event) => {
   button.disabled = true;
   try {
     const user = await auth.register(name, mail, pass);
-    location.href = `/users/${user.id}`;
+    location.href = safeNext(next, `/users/${user.id}`);
   } catch (err) {
     const status = err instanceof ApiError ? err.status : 0;
     if (status === 409 && err.detail.includes('is already taken')) {
