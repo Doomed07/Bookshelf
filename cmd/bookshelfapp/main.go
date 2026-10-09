@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +12,7 @@ import (
 	core_auth "github.com/Doomed07/Bookshelf/internal/core/auth"
 	core_config "github.com/Doomed07/Bookshelf/internal/core/config"
 	core_logger "github.com/Doomed07/Bookshelf/internal/core/logger"
+	core_metrics "github.com/Doomed07/Bookshelf/internal/core/metrics"
 	core_postgres_pgx "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 	core_http_server "github.com/Doomed07/Bookshelf/internal/core/transport/http/server"
@@ -70,6 +72,7 @@ func main() {
 		logger.Fatal("failed to init postgres connection pool", zap.Error(err))
 	}
 	defer pool.Close()
+	core_metrics.RegisterPool(pool.Pool)
 
 	logger.Debug("initializing feature", zap.String("feature", "Users"))
 	usersRepository := users_repository_postgres.NewUsersRepository(pool)
@@ -103,6 +106,7 @@ func main() {
 	httpServer := core_http_server.NewHTTPServer(
 		core_http_server.NewConfigMust(),
 		logger,
+		core_http_middleware.Metrics(),
 		core_http_middleware.CORS(),
 		core_http_middleware.RequestID(),
 		core_http_middleware.Logger(logger),
@@ -128,6 +132,23 @@ func main() {
 
 	httpServer.RegisterStatic("/static/", web.Static())
 	httpServer.RegisterRoutes(web.Routes(booksService, usersService)...)
+
+	logger.Debug("initializing metrics server")
+	metricsServer := core_http_server.NewHTTPServer(
+		core_http_server.NewMetricsConfigMust(),
+		logger,
+	)
+	metricsServer.RegisterRoutes(core_http_server.Route{
+		Method:  http.MethodGet,
+		Path:    "/metrics",
+		Handler: core_metrics.Handler().ServeHTTP,
+	})
+
+	go func() {
+		if err := metricsServer.Run(ctx); err != nil {
+			logger.Error("Failed to run metrics server", zap.Error(err))
+		}
+	}()
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("Failed to run server", zap.Error(err))

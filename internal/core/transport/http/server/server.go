@@ -42,21 +42,23 @@ func (s *HTTPServer) RegisterAPIRouters(routers ...*APIVersionRouter) {
 }
 
 func (s *HTTPServer) RegisterSwagger() {
+	label := core_http_middleware.RouteLabel("/swagger/")
+
 	s.mux.Handle(
 		"/swagger/",
-		httpSwagger.Handler(
+		label(httpSwagger.Handler(
 			httpSwagger.URL("/swagger/doc.json"),
 			httpSwagger.DefaultModelsExpandDepth(-1),
-		),
+		)),
 	)
 
-	s.mux.HandleFunc(
+	s.mux.Handle(
 		"/swagger/doc.json",
-		func(w http.ResponseWriter, r *http.Request) {
+		label(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
-		},
+		})),
 	)
 }
 
@@ -69,7 +71,7 @@ func (s *HTTPServer) RegisterRoutes(routes ...Route) {
 			pattern = route.Method + " " + route.Path
 		}
 
-		s.mux.Handle(pattern, route.WithMiddleware())
+		s.mux.Handle(pattern, core_http_middleware.RouteLabel(route.Path)(route.WithMiddleware()))
 	}
 }
 

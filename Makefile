@@ -105,3 +105,9 @@ swagger-gen:
 	
 ps:
 	@docker compose ps
+
+monitoring-up:
+	@docker compose up -d prometheus grafana
+
+monitoring-down:
+	@docker compose down prometheus grafana

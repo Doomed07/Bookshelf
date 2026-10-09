@@ -4,6 +4,8 @@ import (
 	"io/fs"
 	"net/http"
 	"strings"
+
+	core_http_middleware "github.com/Doomed07/Bookshelf/internal/core/transport/http/middleware"
 )
 
 // RegisterStatic раздаёт файлы из fsys по prefix, например "/static/".
@@ -12,7 +14,9 @@ func (s *HTTPServer) RegisterStatic(prefix string, fsys fs.FS) {
 
 	s.mux.Handle(
 		http.MethodGet+" "+prefix,
-		http.StripPrefix(strings.TrimSuffix(prefix, "/"), fileServer),
+		core_http_middleware.RouteLabel(prefix)(
+			http.StripPrefix(strings.TrimSuffix(prefix, "/"), fileServer),
+		),
 	)
 }
 

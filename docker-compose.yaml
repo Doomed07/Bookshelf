@@ -19,6 +19,7 @@ services:
       - AUTH_BCRYPT_COST=${AUTH_BCRYPT_COST}
       - AUTH_COOKIE_SECURE=${AUTH_COOKIE_SECURE}
       - LOGGER_FOLDER=/app/out/logs
+      - METRICS_ADDR=${METRICS_ADDR}
     volumes:
       - ${PROJECT_ROOT}/out/logs:/app/out/logs
     ports:
@@ -61,3 +62,36 @@ services:
         ENTRYPOINT ["swag"]
     volumes:
       - ${PROJECT_ROOT}:/code
+
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    container_name: bookshelfapp-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - ${PROJECT_ROOT}/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ${PROJECT_ROOT}/out/prometheus:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    container_name: bookshelfapp-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ${PROJECT_ROOT}/deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ${PROJECT_ROOT}/deploy/grafana/dashboards:/etc/grafana/dashboards:ro
+      - ${PROJECT_ROOT}/out/grafana:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+    restart: always
