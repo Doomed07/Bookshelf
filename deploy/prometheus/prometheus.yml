@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: shelfmate     
+    static_configs:
+      - targets: ["bookshelfapp:2112"]
+
+  - job_name: shelfmate-local   
+    static_configs:
+      - targets: ["host.docker.internal:2112"]

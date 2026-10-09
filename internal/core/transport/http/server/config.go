@@ -31,3 +31,22 @@ func NewConfigMust() Config {
 
 	return config
 }
+
+type metricsEnv struct {
+	Addr string `envconfig:"ADDR" default:":2112"`
+}
+
+// NewMetricsConfigMust — конфиг сервера метрик (METRICS_ADDR). Возвращает обычный Config,
+// чтобы для /metrics переиспользовать тот же HTTPServer с корректной остановкой.
+func NewMetricsConfigMust() Config {
+	var env metricsEnv
+
+	if err := envconfig.Process("METRICS", &env); err != nil {
+		panic(fmt.Errorf("get metrics server config: %w", err))
+	}
+
+	return Config{
+		Addr:            env.Addr,
+		ShutdownTimeout: 5 * time.Second,
+	}
+}

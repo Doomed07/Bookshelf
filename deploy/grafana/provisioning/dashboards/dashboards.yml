@@ -1,0 +1,9 @@
+apiVersion: 1
+providers:
+  - name: shelfmate
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/dashboards

@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
+	core_metrics "github.com/Doomed07/Bookshelf/internal/core/metrics"
 )
 
 func (s *BookshelfService) AddBook(ctx context.Context, userID, bookID int) (core_domain.ShelfBookWithBook, error) {
@@ -17,5 +18,7 @@ func (s *BookshelfService) AddBook(ctx context.Context, userID, bookID int) (cor
 	if err != nil {
 		return core_domain.ShelfBookWithBook{}, fmt.Errorf("get book from repo: %w", err)
 	}
+
+	core_metrics.ShelfBooksAdded.Inc()
 	return shelfWithBooks, nil
 }

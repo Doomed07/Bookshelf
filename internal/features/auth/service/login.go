@@ -8,12 +8,25 @@ import (
 
 	core_domain "github.com/Doomed07/Bookshelf/internal/core/domain"
 	core_errors "github.com/Doomed07/Bookshelf/internal/core/errors"
+	core_metrics "github.com/Doomed07/Bookshelf/internal/core/metrics"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var errInvalidCredentials = fmt.Errorf("invalid login or password: %w", core_errors.ErrUnauthorized)
 
 func (s *AuthService) Login(ctx context.Context, login, password string) (core_domain.User, string, error) {
+	user, token, err := s.login(ctx, login, password) // вся старая логика без изменений
+
+	switch {
+	case err == nil:
+		core_metrics.Logins.WithLabelValues(core_metrics.LoginSuccess).Inc()
+	case errors.Is(err, errInvalidCredentials):
+		core_metrics.Logins.WithLabelValues(core_metrics.LoginInvalid).Inc()
+	}
+	return user, token, err
+}
+
+func (s *AuthService) login(ctx context.Context, login, password string) (core_domain.User, string, error) {
 	login = strings.TrimSpace(login)
 	if len(login) > 254 || len(password) > core_domain.MaxPasswordLen {
 		return core_domain.User{}, "", errInvalidCredentials
