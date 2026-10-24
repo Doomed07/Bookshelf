@@ -47,12 +47,12 @@ func (r *AuthRepository) CreateUser(
 			case usernameConstraint:
 				return core_domain.User{}, fmt.Errorf(
 					"username %q is already taken: %w",
-					user.Username, core_errors.ErrConflict)
+					user.Username, core_errors.ErrUsernameTaken)
 
 			case emailConstraint:
 				return core_domain.User{}, fmt.Errorf(
 					"email %q is already registered: %w",
-					user.Email, core_errors.ErrConflict)
+					user.Email, core_errors.ErrEmailTaken)
 			}
 		}
 		return core_domain.User{}, fmt.Errorf("scan query row: %w", err)

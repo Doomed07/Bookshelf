@@ -90,7 +90,9 @@ app-run:
 	go run ${PROJECT_ROOT}/cmd/bookshelfapp/main.go
 
 app-deploy:
-	@docker compose up -d --build bookshelfapp
+	@mkdir -p out/logs && \
+	docker run --rm -v ${PROJECT_ROOT}/out/logs:/logs alpine:3.24 chown -R 10001:10001 /logs && \
+	docker compose up -d --build bookshelfapp
 
 app-undeploy:
 	@docker compose down bookshelfapp

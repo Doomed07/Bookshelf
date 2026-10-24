@@ -25,6 +25,8 @@ func NewHTTPResponseHandler(
 }
 
 func (h *HTTPResponseHandler) JSONResponse(statusCode int, responseBody any) {
+	h.rw.Header().Set("Content-Type", "application/json")
+	h.rw.Header().Set("X-Content-Type-Options", "nosniff") // чтобы запретить браузеру угадывать тип
 	h.rw.WriteHeader(statusCode)
 
 	if err := json.NewEncoder(h.rw).Encode(responseBody); err != nil {
@@ -38,6 +40,7 @@ func (h *HTTPResponseHandler) StatusCodeResponse(statusCode int) {
 
 func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 	statusCode := StatusFromError(err)
+	textCode := CodeFromError(err)
 
 	logFunc := h.log.Error
 	switch statusCode {
@@ -50,22 +53,23 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 
 	logFunc(msg, zap.Error(err))
 
-	h.errorResponse(statusCode, err, msg)
+	h.errorResponse(statusCode, textCode, msg)
 }
 
 func (h *HTTPResponseHandler) PanicResponse(p any, msg string) {
 	statusCode := http.StatusInternalServerError
+	textCode := "internal"
 	err := fmt.Errorf("unexpected panic: %v", p)
 
 	h.log.Error(msg, zap.Error(err))
 
-	h.errorResponse(statusCode, err, msg)
+	h.errorResponse(statusCode, textCode, msg)
 }
 
-func (h *HTTPResponseHandler) errorResponse(statusCode int, err error, msg string) {
+func (h *HTTPResponseHandler) errorResponse(statusCode int, textCode string, msg string) {
 	response := ErrorResponse{
-		Error:   err.Error(),
-		Message: msg,
+		TextCode: textCode,
+		Message:  msg,
 	}
 
 	h.JSONResponse(statusCode, response)

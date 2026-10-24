@@ -8,12 +8,10 @@ import (
 )
 
 type ErrorResponse struct {
-	Error   string `json:"error" example:"invalid argument"`
-	Message string `json:"message" example:"the provided argument is invalid"`
+	TextCode string `json:"text_code" example:"invalid_argument"`
+	Message  string `json:"message" example:"the provided argument is invalid"`
 }
 
-// StatusFromError переводит ошибку сервиса в HTTP-статус. Порядок проверок важен:
-// ошибка может оборачивать несколько sentinel-ошибок сразу.
 func StatusFromError(err error) int {
 	switch {
 	case errors.Is(err, core_errors.ErrConflict):
@@ -28,5 +26,26 @@ func StatusFromError(err error) int {
 		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
+	}
+}
+
+func CodeFromError(err error) string {
+	switch {
+	case errors.Is(err, core_errors.ErrUsernameTaken):
+		return "username_taken"
+	case errors.Is(err, core_errors.ErrEmailTaken):
+		return "email_taken"
+	case errors.Is(err, core_errors.ErrConflict):
+		return "conflict"
+	case errors.Is(err, core_errors.ErrInvalidArgument):
+		return "invalid_argument"
+	case errors.Is(err, core_errors.ErrNotFound):
+		return "not_found"
+	case errors.Is(err, core_errors.ErrUnauthorized):
+		return "unauthorized"
+	case errors.Is(err, core_errors.ErrForbidden):
+		return "forbidden"
+	default:
+		return "internal"
 	}
 }

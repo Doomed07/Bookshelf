@@ -2,11 +2,11 @@ basePath: /api/v1
 definitions:
   github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse:
     properties:
-      error:
-        example: invalid argument
-        type: string
       message:
         example: the provided argument is invalid
+        type: string
+      text_code:
+        example: invalid_argument
         type: string
     type: object
   github_com_Doomed07_Bookshelf_internal_features_books_transport_http.BookDTOResponse:

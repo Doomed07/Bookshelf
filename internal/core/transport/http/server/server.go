@@ -56,6 +56,7 @@ func (s *HTTPServer) RegisterSwagger() {
 		"/swagger/doc.json",
 		label(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("X-Content-Type-Options", "nosniff") // также добавил для усиления
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
 		})),
@@ -82,8 +83,12 @@ func (s *HTTPServer) Handler() http.Handler {
 
 func (s *HTTPServer) Run(ctx context.Context) error {
 	server := &http.Server{
-		Addr:    s.config.Addr,
-		Handler: s.Handler(),
+		Addr:              s.config.Addr,
+		Handler:           s.Handler(),
+		ReadHeaderTimeout: s.config.ReadHeaderTimeout, // сколько ждать заголовки запроса
+		ReadTimeout:       s.config.ReadTimeout,
+		WriteTimeout:      s.config.WriteTimeout,
+		IdleTimeout:       s.config.IdleTimeout,
 	}
 
 	ch := make(chan error, 1)

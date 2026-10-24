@@ -1017,13 +1017,13 @@ const docTemplate = `{
         "github_com_Doomed07_Bookshelf_internal_core_transport_http_response.ErrorResponse": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "invalid argument"
-                },
                 "message": {
                     "type": "string",
                     "example": "the provided argument is invalid"
+                },
+                "text_code": {
+                    "type": "string",
+                    "example": "invalid_argument"
                 }
             }
         },

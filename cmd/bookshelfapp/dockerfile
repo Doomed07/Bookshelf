@@ -7,5 +7,11 @@ RUN CGO_ENABLED=0 go build -tags timetzdata -o /app/cmd/bookshelfapp/exe /app/cm
 
 FROM alpine:3.24
 WORKDIR /app
-COPY --from=builder  /app/cmd/bookshelfapp/exe /app
+
+RUN addgroup -S -g 10001 app && adduser -S -u 10001 -G app app \
+    && mkdir -p /app/out/logs && chown -R app:app /app/out
+
+COPY --from=builder --chown=app:app /app/cmd/bookshelfapp/exe /app/exe
+
+USER app
 CMD ["/app/exe"]
