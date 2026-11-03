@@ -3,6 +3,8 @@ package core_postgres_pgx
 import (
 	"context"
 	"fmt"
+	"net"
+	"net/url"
 	"time"
 
 	core_postgres_pool "github.com/Doomed07/Bookshelf/internal/core/repository/postgres/pool"
@@ -14,17 +16,22 @@ type ConnPool struct {
 	opTimeout time.Duration
 }
 
-func NewConnPool(config Config, ctx context.Context) (*ConnPool, error) {
-	connString := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		config.User,
-		config.Pass,
-		config.Host,
-		config.Port,
-		config.Database,
-	)
+// connString собирает строку подключения через net/url: логин, пароль и имя БД
+// экранируются, поэтому символы вроде "@", "/", ":", "%" в пароле ничего не ломают.
+func connString(config Config) string {
+	u := &url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(config.User, config.Pass),
+		Host:     net.JoinHostPort(config.Host, config.Port),
+		Path:     "/" + config.Database,
+		RawQuery: "sslmode=disable",
+	}
 
-	pgxconfig, err := pgxpool.ParseConfig(connString)
+	return u.String()
+}
+
+func NewConnPool(config Config, ctx context.Context) (*ConnPool, error) {
+	pgxconfig, err := pgxpool.ParseConfig(connString(config))
 	if err != nil {
 		return nil, fmt.Errorf("parse pgxconfig: %w", err)
 	}

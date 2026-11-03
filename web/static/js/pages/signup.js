@@ -88,10 +88,10 @@ form.addEventListener('submit', async (event) => {
     location.href = safeNext(next, `/users/${user.id}`);
   } catch (err) {
     const status = err instanceof ApiError ? err.status : 0;
-    if (status === 409 && err.detail.includes('is already taken')) {
+    if (status === 409 && err.detail === 'username_taken') {
       setFieldError(username, usernameHint, USERNAME_TAKEN_ERROR, USERNAME_HINT);
       username.focus();
-    } else if (status === 409 && err.detail.includes('is already registered')) {
+    } else if (status === 409 && err.detail === 'email_taken') {
       setFieldError(email, emailHint, EMAIL_TAKEN_ERROR);
       email.focus();
     } else {

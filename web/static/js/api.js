@@ -1,7 +1,7 @@
 // Обёртка над JSON API /api/v1.
 
 export class ApiError extends Error {
-  // detail — технический текст ошибки от сервера (поле "error"); по нему формы
+  // detail — машинный код ошибки от сервера (поле "text_code"); по нему формы
   // отличают «имя занято» от «email занят». Пользователю его не показываем.
   constructor(status, message, detail = '') {
     super(message);
@@ -41,7 +41,7 @@ export async function api(path, { method = 'GET', body } = {}) {
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, (data && data.message) || response.statusText, (data && data.error) || '');
+    throw new ApiError(response.status, (data && data.message) || response.statusText, (data && data.text_code) || '');
   }
   return data;
 }
